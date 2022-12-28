@@ -11,14 +11,24 @@ import {
   Heading,
   HStack,
   Input,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
   Select,
   Textarea,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 import { PageHeader } from '../../../../src/components/page-header';
-import { useCategories, useFlashcard } from '../../../../hooks';
+import { useCategories, useFlashcard, useFlashcards } from '../../../../hooks';
+import { useRouter } from 'next/navigation';
 
 type Params = {
   slug: string;
@@ -59,8 +69,11 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
 }
 
 export default function Page({ params: { slug } }: { params: Params }) {
+  const { replace } = useRouter();
   const { data: categories } = useCategories();
   const { data: flashcard } = useFlashcard(slug);
+  const { update, remove } = useFlashcards();
+  const toast = useToast();
 
   const [values, dispatch] = useReducer(valuesReducer, {
     id: flashcard?.id,
@@ -68,6 +81,8 @@ export default function Page({ params: { slug } }: { params: Params }) {
     answer: flashcard?.answer,
     categoryId: flashcard?.categoryId,
   });
+  const [updating, setUpdating] = useState(false);
+  const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
     if (flashcard) {
@@ -83,7 +98,32 @@ export default function Page({ params: { slug } }: { params: Params }) {
     }
   }, [flashcard]);
 
-  const handleUpdate = () => {};
+  const handleUpdate = async () => {
+    setUpdating(true);
+    await update(slug, {
+      question: values.question,
+      answer: values.answer,
+      categoryId: values.categoryId,
+    });
+    setUpdating(false);
+    toast({
+      status: 'success',
+      title: 'Flashcard updated',
+      description: `Flashcard ${values.question} has been updated`,
+    });
+  };
+
+  const handleRemove = async () => {
+    setRemoving(true);
+    await remove(slug);
+    setRemoving(false);
+    replace('/manage/flashcards');
+    toast({
+      status: 'success',
+      title: 'Flashcard deleted',
+      description: `Flashcard ${values.question} has been deleted`,
+    });
+  };
 
   return (
     <VStack w='full' h='full'>
@@ -140,10 +180,37 @@ export default function Page({ params: { slug } }: { params: Params }) {
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
-              <Button variant='ghost' colorScheme='red'>
-                Delete
-              </Button>
-              <Button colorScheme='green' onClick={handleUpdate}>
+              <Popover>
+                <PopoverTrigger>
+                  <Button variant='ghost' colorScheme='red'>
+                    Delete
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverCloseButton size='md' />
+                  <PopoverHeader>Confirmation!</PopoverHeader>
+                  <PopoverBody>
+                    Are you sure you want to delete this flashcard?
+                  </PopoverBody>
+                  <PopoverFooter>
+                    <Button variant='ghost'>Cancel</Button>
+                    <Button
+                      variant='ghost'
+                      colorScheme='red'
+                      onClick={handleRemove}
+                      isLoading={removing}
+                    >
+                      Delete
+                    </Button>
+                  </PopoverFooter>
+                </PopoverContent>
+              </Popover>
+              <Button
+                colorScheme='green'
+                isLoading={updating}
+                onClick={handleUpdate}
+              >
                 Update
               </Button>
             </HStack>

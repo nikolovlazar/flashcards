@@ -37,6 +37,26 @@ export function useCategories() {
     }
   };
 
+  const update = async (slug: string, name: string) => {
+    const res = await fetch(`/api/categories/${slug}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    });
+
+    if (res.ok) {
+      mutate();
+
+      return await res.json();
+    }
+
+    return null;
+  };
+
   return {
     data,
     error,
@@ -45,6 +65,7 @@ export function useCategories() {
     mutate,
     create,
     remove,
+    update,
   };
 }
 

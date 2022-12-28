@@ -13,13 +13,14 @@ import {
   Input,
   Select,
   Textarea,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 
 import { PageHeader } from '../../../../src/components/page-header';
-import { useCategories } from '../../../../hooks';
+import { useCategories, useFlashcards } from '../../../../hooks';
 
 enum ValuesActionKind {
   SET_QUESTION = 'SET_QUESTION',
@@ -54,6 +55,10 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
 
 export default function Page() {
   const { data: categories } = useCategories();
+  const { create } = useFlashcards();
+  const toast = useToast();
+
+  const [creating, setCreating] = useState(false);
 
   const [values, dispatch] = useReducer(valuesReducer, {
     question: '',
@@ -61,8 +66,26 @@ export default function Page() {
     categoryId: 0,
   });
 
-  const handleCreate = () => {
-    console.log(values);
+  const resetValues = () => {
+    dispatch({ type: ValuesActionKind.SET_QUESTION, payload: '' });
+    dispatch({ type: ValuesActionKind.SET_ANSWER, payload: '' });
+    dispatch({ type: ValuesActionKind.SET_CATEGORY, payload: 0 });
+  };
+
+  const handleCreate = async () => {
+    setCreating(true);
+    await create({
+      question: values.question,
+      answer: values.answer,
+      categoryId: values.categoryId,
+    });
+    setCreating(false);
+    resetValues();
+    toast({
+      status: 'success',
+      title: 'Flashcard created',
+      description: `Flashcard ${values.question} has been created`,
+    });
   };
 
   return (
@@ -107,7 +130,13 @@ export default function Page() {
                 <FormLabel>Category</FormLabel>
                 <Select
                   placeholder='Select category'
-                  defaultValue={values?.categoryId}
+                  value={values?.categoryId}
+                  onChange={(e) => {
+                    dispatch({
+                      type: ValuesActionKind.SET_CATEGORY,
+                      payload: e.currentTarget.value,
+                    });
+                  }}
                 >
                   {categories?.map((category) => (
                     <option key={category.id} value={category.id}>
@@ -120,10 +149,14 @@ export default function Page() {
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
-              <Button as={NextLink} href='/manage' variant='ghost'>
+              <Button as={NextLink} href='/manage/flashcards' variant='ghost'>
                 Cancel
               </Button>
-              <Button colorScheme='green' onClick={handleCreate}>
+              <Button
+                colorScheme='green'
+                isLoading={creating}
+                onClick={handleCreate}
+              >
                 Create
               </Button>
             </HStack>

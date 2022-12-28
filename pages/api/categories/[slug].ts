@@ -19,14 +19,11 @@ export default async function handler(
       res.status(200).json(await getCategory(slug as string));
       break;
     case 'PUT':
-      var category = await getCategory(id);
-      if (!category) {
-        res.status(404).json({ message: 'Category not found' });
-        return;
-      }
+      const category = await getCategory(slug as string);
+      if (!category) return res.status(404).end('Category not found');
 
       res.status(200).json(
-        await updateCategory(id, {
+        await updateCategory(category.id, {
           name,
           slug: sluggify(name, { lower: true }),
         })

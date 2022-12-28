@@ -12,6 +12,7 @@ import {
   Heading,
   HStack,
   Input,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
@@ -20,13 +21,27 @@ import { useCategories } from '../../../../hooks';
 import { PageHeader } from '../../../../src/components/page-header';
 
 export default function Page() {
-  const { create, isValidating, isLoading } = useCategories();
+  const { create } = useCategories();
+  const toast = useToast();
+
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (name.length === 0) return;
 
-    create(name);
+    setIsLoading(true);
+
+    await create(name);
+
+    toast({
+      status: 'success',
+      title: 'Category created',
+      description: `Category ${name} has been created`,
+    });
+    setName('');
+
+    setIsLoading(false);
   };
 
   return (
@@ -53,12 +68,12 @@ export default function Page() {
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
-              <Button as={NextLink} href='/manage' variant='ghost'>
+              <Button as={NextLink} href='/manage/categories' variant='ghost'>
                 Cancel
               </Button>
               <Button
                 colorScheme='green'
-                isLoading={isValidating || isLoading}
+                isLoading={isLoading}
                 onClick={handleCreate}
               >
                 Create

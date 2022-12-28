@@ -3,7 +3,7 @@ import sluggify from 'slugify';
 
 import {
   createFlashcard,
-  getCategory,
+  getCategoryById,
   getFlashcards,
 } from '../../../prisma/helpers';
 
@@ -18,7 +18,7 @@ export default async function handler(
     case 'POST':
       const { question, answer, categoryId } = req.body;
 
-      var category = await getCategory(categoryId);
+      var category = await getCategoryById(Number(categoryId));
       if (!category) {
         res.status(404).json({ message: 'Category not found' });
         return;

@@ -46,7 +46,10 @@ export default function Page({ params: { slug } }: { params: Params }) {
   );
 
   const showCompletion =
-    index === displayedCards?.length && !flipped && !isLoading;
+    index === displayedCards?.length &&
+    !flipped &&
+    !isLoading &&
+    (category?.flashcards?.length ?? 0) > 0;
 
   useEffect(() => {
     if (
@@ -100,9 +103,18 @@ export default function Page({ params: { slug } }: { params: Params }) {
         p={2}
       >
         <Box position='relative' boxSize='full'>
-          {isLoading ? (
-            <Spinner size='xl' position='absolute' left='50%' />
-          ) : (
+          {isLoading && <Spinner size='xl' position='absolute' left='50%' />}
+
+          {(category?.flashcards?.length ?? 0) === 0 && (
+            <Heading
+              position='absolute'
+              left='50%'
+              transform='translateX(-50%)'
+            >
+              Empty category!
+            </Heading>
+          )}
+          {(category?.flashcards?.length ?? 0) > 0 && (
             <>
               <Card
                 bg='cardBackground'

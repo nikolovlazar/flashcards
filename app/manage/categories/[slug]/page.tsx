@@ -19,12 +19,13 @@ import {
   PopoverFooter,
   PopoverHeader,
   PopoverTrigger,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useCategories, useCategory } from '../../../../hooks';
 
+import { useCategories, useCategory } from '../../../../hooks';
 import { PageHeader } from '../../../../src/components/page-header';
 
 type Params = {
@@ -32,11 +33,14 @@ type Params = {
 };
 
 export default function Page({ params: { slug } }: { params: Params }) {
+  const toast = useToast();
   const { replace } = useRouter();
-  const { remove } = useCategories();
+  const { remove, update } = useCategories();
   const { data: category } = useCategory(slug);
+
   const [name, setName] = useState(category?.name ?? '');
   const [removing, setRemoving] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (category && name.length === 0) {
@@ -44,10 +48,27 @@ export default function Page({ params: { slug } }: { params: Params }) {
     }
   }, [category, name]);
 
+  const handleUpdate = async () => {
+    setUpdating(true);
+    const updated = await update(slug, name);
+    replace(`/manage/categories/${updated.slug}`);
+    toast({
+      status: 'success',
+      title: 'Category updated',
+      description: `Category ${updated.name} has been updated`,
+    });
+    setUpdating(false);
+  };
+
   const handleRemove = async () => {
     setRemoving(true);
     await remove(slug);
     replace('/manage/categories');
+    toast({
+      status: 'success',
+      title: 'Category deleted',
+      description: `Category ${category?.name} has been deleted`,
+    });
     setRemoving(false);
   };
 
@@ -101,7 +122,13 @@ export default function Page({ params: { slug } }: { params: Params }) {
                   </PopoverFooter>
                 </PopoverContent>
               </Popover>
-              <Button colorScheme='green'>Update</Button>
+              <Button
+                colorScheme='green'
+                onClick={handleUpdate}
+                isLoading={updating}
+              >
+                Update
+              </Button>
             </HStack>
           </CardFooter>
         </Card>
