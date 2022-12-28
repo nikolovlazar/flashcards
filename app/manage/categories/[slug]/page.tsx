@@ -14,8 +14,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useCategories } from '../../../../hooks';
 
-import { categories } from '../../../../mock/categories';
 import { PageHeader } from '../../../../src/components/page-header';
 
 type Params = {
@@ -23,7 +23,8 @@ type Params = {
 };
 
 export default function Page({ params: { slug } }: { params: Params }) {
-  const category = categories.find((cat) => cat.slug === slug);
+  const { data: categories } = useCategories();
+  const category = categories?.find((cat) => cat.slug === slug);
   const [name, setName] = useState(category?.name);
 
   return (

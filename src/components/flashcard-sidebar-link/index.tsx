@@ -1,3 +1,5 @@
+'use client';
+
 import {
   LinkBox,
   VStack,
@@ -8,12 +10,12 @@ import {
 } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import NextLink from 'next/link';
-import { Card } from '@prisma/client';
+import type { Flashcard } from '@prisma/client';
 
-import { categories } from '../../../mock/categories';
 import { getContrastingTextColor, stringToColour } from '../../../utils/color';
+import { useCategories } from '../../../hooks';
 
-type Props = Pick<Card, 'question' | 'answer' | 'categoryId' | 'slug'>;
+type Props = Pick<Flashcard, 'question' | 'answer' | 'categoryId' | 'slug'>;
 
 export const FlashcardSidebarLink = ({
   question,
@@ -21,9 +23,11 @@ export const FlashcardSidebarLink = ({
   categoryId,
   slug,
 }: Props) => {
+  const { data: categories } = useCategories();
+
   const pathname = usePathname();
   const isActive = pathname === `/manage/flashcards/${slug}`;
-  const category = categories.find((category) => category.id === categoryId);
+  const category = categories?.find((category) => category.id === categoryId);
 
   return (
     <LinkBox

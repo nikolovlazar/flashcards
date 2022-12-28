@@ -20,6 +20,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
+    "slugify": "^1.6.5",
+    "swr": "^2.0.0",
     "typescript": "4.9.4"
   },
   "devDependencies": {

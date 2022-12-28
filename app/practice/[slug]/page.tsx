@@ -25,7 +25,7 @@ import {
   BsShuffle,
 } from 'react-icons/bs';
 
-import { cards } from '../../../mock/cards';
+import { flashcards } from '../../../mock/cards';
 import { categories } from '../../../mock/categories';
 import { PageHeader } from '../../../src/components/page-header';
 import { shuffleArray } from '../../../utils/array';
@@ -36,7 +36,7 @@ type Params = {
 
 export default function Page({ params: { slug } }: { params: Params }) {
   const category = categories.find((category) => category.slug === slug);
-  const categoryCards = cards.filter(
+  const categoryCards = flashcards.filter(
     (card) => card.categoryId === category?.id
   );
 

@@ -15,11 +15,10 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 
-import { cards } from '../../../../mock/cards';
-import { categories } from '../../../../mock/categories';
 import { PageHeader } from '../../../../src/components/page-header';
+import { useCategories, useFlashcard } from '../../../../hooks';
 
 type Params = {
   slug: string;
@@ -29,6 +28,7 @@ enum ValuesActionKind {
   SET_QUESTION = 'SET_QUESTION',
   SET_ANSWER = 'SET_ANSWER',
   SET_CATEGORY = 'SET_CATEGORY',
+  SET_STATE = 'SET_STATE',
 }
 
 type ValuesAction = {
@@ -51,19 +51,39 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
       return { ...state, answer: action.payload };
     case ValuesActionKind.SET_CATEGORY:
       return { ...state, categoryId: action.payload };
+    case ValuesActionKind.SET_STATE:
+      return { ...state, ...action.payload };
     default:
       return state;
   }
 }
 
 export default function Page({ params: { slug } }: { params: Params }) {
-  const card = cards.find((card) => card.slug === slug);
+  const { data: categories } = useCategories();
+  const { data: flashcard } = useFlashcard(slug);
+
   const [values, dispatch] = useReducer(valuesReducer, {
-    id: card?.id,
-    question: card?.question,
-    answer: card?.answer,
-    categoryId: card?.categoryId,
+    id: flashcard?.id,
+    question: flashcard?.question,
+    answer: flashcard?.answer,
+    categoryId: flashcard?.categoryId,
   });
+
+  useEffect(() => {
+    if (flashcard) {
+      dispatch({
+        type: ValuesActionKind.SET_STATE,
+        payload: {
+          id: flashcard.id,
+          question: flashcard.question,
+          answer: flashcard.answer,
+          categoryId: flashcard.categoryId,
+        },
+      });
+    }
+  }, [flashcard]);
+
+  const handleUpdate = () => {};
 
   return (
     <VStack w='full' h='full'>
@@ -72,7 +92,7 @@ export default function Page({ params: { slug } }: { params: Params }) {
         <Card w='full' bg='cardBackground'>
           <CardHeader>
             <Heading as='h2' size='md'>
-              Editing {card?.question}
+              Editing {flashcard?.question}
             </Heading>
           </CardHeader>
           <CardBody>
@@ -107,9 +127,9 @@ export default function Page({ params: { slug } }: { params: Params }) {
                 <FormLabel>Category</FormLabel>
                 <Select
                   placeholder='Select category'
-                  defaultValue={values?.categoryId}
+                  value={values?.categoryId}
                 >
-                  {categories.map((category) => (
+                  {categories?.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
@@ -123,7 +143,9 @@ export default function Page({ params: { slug } }: { params: Params }) {
               <Button variant='ghost' colorScheme='red'>
                 Delete
               </Button>
-              <Button colorScheme='green'>Update</Button>
+              <Button colorScheme='green' onClick={handleUpdate}>
+                Update
+              </Button>
             </HStack>
           </CardFooter>
         </Card>

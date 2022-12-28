@@ -1,3 +1,5 @@
+'use client';
+
 import { Heading, HStack, Icon, IconButton } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { RxHamburgerMenu } from 'react-icons/rx';

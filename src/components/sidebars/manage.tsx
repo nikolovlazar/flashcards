@@ -1,3 +1,5 @@
+'use client';
+
 import NextLink from 'next/link';
 import {
   Button,
@@ -10,17 +12,20 @@ import {
   Tabs,
   VStack,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 
-import { cards } from '../../../mock/cards';
-import { categories } from '../../../mock/categories';
 import { FlashcardSidebarLink } from '../flashcard-sidebar-link';
 import { SidebarHeader } from './sidebar-header';
 import { SidebarLink } from '../sidebar-link';
-import { useState } from 'react';
+import { useCategories, useFlashcards } from '../../../hooks';
 
 export const ManageSidebar = () => {
   const [tabIndex, setTabIndex] = useState(0);
+
+  const { data: categories } = useCategories();
+  const { data: flashcards } = useFlashcards();
+
   return (
     <VStack
       w='full'
@@ -45,7 +50,7 @@ export const ManageSidebar = () => {
         <TabPanels>
           <TabPanel p={0}>
             <VStack w='full' as='nav' alignItems='stretch' spacing={0}>
-              {cards.map(({ id, question, answer, slug, categoryId }) => (
+              {flashcards?.map(({ id, question, answer, slug, categoryId }) => (
                 <FlashcardSidebarLink
                   key={id}
                   question={question}
@@ -64,7 +69,7 @@ export const ManageSidebar = () => {
               overflowY='auto'
               p={2}
             >
-              {categories.map(({ id, name, slug }) => (
+              {categories?.map(({ id, name, slug }) => (
                 <SidebarLink
                   key={id}
                   title={name}

@@ -1,3 +1,5 @@
+'use client';
+
 import { IconButton, useColorMode } from '@chakra-ui/react';
 
 import { BsMoonStars, BsSun } from 'react-icons/bs';

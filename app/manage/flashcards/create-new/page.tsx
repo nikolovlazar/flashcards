@@ -18,8 +18,8 @@ import {
 import NextLink from 'next/link';
 import { useReducer } from 'react';
 
-import { categories } from '../../../../mock/categories';
 import { PageHeader } from '../../../../src/components/page-header';
+import { useCategories } from '../../../../hooks';
 
 enum ValuesActionKind {
   SET_QUESTION = 'SET_QUESTION',
@@ -53,6 +53,8 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
 }
 
 export default function Page() {
+  const { data: categories } = useCategories();
+
   const [values, dispatch] = useReducer(valuesReducer, {
     question: '',
     answer: '',
@@ -107,7 +109,7 @@ export default function Page() {
                   placeholder='Select category'
                   defaultValue={values?.categoryId}
                 >
-                  {categories.map((category) => (
+                  {categories?.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>

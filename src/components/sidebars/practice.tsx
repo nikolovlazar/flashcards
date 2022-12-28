@@ -2,11 +2,13 @@
 
 import { VStack } from '@chakra-ui/react';
 
-import { categories } from '../../../mock/categories';
+import { useCategories } from '../../../hooks';
 import { SidebarLink } from '../sidebar-link';
 import { SidebarHeader } from './sidebar-header';
 
-export const PracticeSidebar = () => {
+export const PracticeSidebar = async () => {
+  const { data: categories } = useCategories();
+
   return (
     <VStack
       w='full'
@@ -18,7 +20,7 @@ export const PracticeSidebar = () => {
     >
       <SidebarHeader />
       <VStack w='full' as='nav' alignItems='stretch' overflowY='auto' p={2}>
-        {categories.map(({ id, name, slug }) => (
+        {categories?.map(({ id, name, slug }) => (
           <SidebarLink key={id} title={name} href={`/practice/${slug}`} />
         ))}
       </VStack>
