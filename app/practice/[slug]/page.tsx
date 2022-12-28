@@ -105,7 +105,7 @@ export default function Page({ params: { slug } }: { params: Params }) {
         <Box position='relative' boxSize='full'>
           {isLoading && <Spinner size='xl' position='absolute' left='50%' />}
 
-          {(category?.flashcards?.length ?? 0) === 0 && (
+          {!isLoading && (category?.flashcards?.length ?? 0) === 0 && (
             <Heading
               position='absolute'
               left='50%'
