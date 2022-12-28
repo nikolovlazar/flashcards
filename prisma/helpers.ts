@@ -51,6 +51,9 @@ export const getCategory = async (slug: string) => {
     where: {
       slug,
     },
+    include: {
+      flashcards: true,
+    },
   });
 };
 

@@ -6,7 +6,7 @@ import { useCategories } from '../../../hooks';
 import { SidebarLink } from '../sidebar-link';
 import { SidebarHeader } from './sidebar-header';
 
-export const PracticeSidebar = async () => {
+export const PracticeSidebar = () => {
   const { data: categories } = useCategories();
 
   return (

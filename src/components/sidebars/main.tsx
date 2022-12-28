@@ -61,7 +61,7 @@ function Title() {
 function Links() {
   return (
     <VStack w='full' as='nav'>
-      <SidebarLink title='Manage' href='/manage' />
+      <SidebarLink title='Manage' href='/manage/flashcards' />
       <SidebarLink title='Practice' href='/practice' />
     </VStack>
   );

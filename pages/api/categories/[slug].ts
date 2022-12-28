@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
 
 import {
-  createCategory,
   deleteCategory,
   getCategory,
   updateCategory,
@@ -19,20 +18,6 @@ export default async function handler(
     case 'GET':
       res.status(200).json(await getCategory(slug as string));
       break;
-    case 'POST':
-      var category = await getCategory(id);
-      if (!category) {
-        res.status(404).json({ message: 'Category not found' });
-        return;
-      }
-
-      res.status(200).json(
-        await createCategory({
-          name,
-          slug: sluggify(name),
-        })
-      );
-      break;
     case 'PUT':
       var category = await getCategory(id);
       if (!category) {
@@ -43,7 +28,7 @@ export default async function handler(
       res.status(200).json(
         await updateCategory(id, {
           name,
-          slug: sluggify(name),
+          slug: sluggify(name, { lower: true }),
         })
       );
       break;

@@ -11,10 +11,19 @@ import {
   Heading,
   HStack,
   Input,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { useCategories } from '../../../../hooks';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useCategories, useCategory } from '../../../../hooks';
 
 import { PageHeader } from '../../../../src/components/page-header';
 
@@ -23,15 +32,30 @@ type Params = {
 };
 
 export default function Page({ params: { slug } }: { params: Params }) {
-  const { data: categories } = useCategories();
-  const category = categories?.find((cat) => cat.slug === slug);
-  const [name, setName] = useState(category?.name);
+  const { replace } = useRouter();
+  const { remove } = useCategories();
+  const { data: category } = useCategory(slug);
+  const [name, setName] = useState(category?.name ?? '');
+  const [removing, setRemoving] = useState(false);
+
+  useEffect(() => {
+    if (category && name.length === 0) {
+      setName(category.name);
+    }
+  }, [category, name]);
+
+  const handleRemove = async () => {
+    setRemoving(true);
+    await remove(slug);
+    replace('/manage/categories');
+    setRemoving(false);
+  };
 
   return (
     <VStack w='full' h='full'>
       <PageHeader backHref='/manage' />
       <VStack w='full' h='full' p={4}>
-        <Card w='full' bg='cardBackground'>
+        <Card w='full' maxW='sm' bg='cardBackground'>
           <CardHeader>
             <Heading as='h2' size='md'>
               Editing {category?.name}
@@ -51,9 +75,32 @@ export default function Page({ params: { slug } }: { params: Params }) {
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
-              <Button variant='ghost' colorScheme='red'>
-                Delete
-              </Button>
+              <Popover>
+                <PopoverTrigger>
+                  <Button variant='ghost' colorScheme='red'>
+                    Delete
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverCloseButton size='md' />
+                  <PopoverHeader>Confirmation!</PopoverHeader>
+                  <PopoverBody>
+                    Are you sure you want to delete this category?
+                  </PopoverBody>
+                  <PopoverFooter>
+                    <Button variant='ghost'>Cancel</Button>
+                    <Button
+                      variant='ghost'
+                      colorScheme='red'
+                      onClick={handleRemove}
+                      isLoading={removing}
+                    >
+                      Delete
+                    </Button>
+                  </PopoverFooter>
+                </PopoverContent>
+              </Popover>
               <Button colorScheme='green'>Update</Button>
             </HStack>
           </CardFooter>

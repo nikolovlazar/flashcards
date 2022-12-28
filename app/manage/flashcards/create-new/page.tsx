@@ -69,7 +69,7 @@ export default function Page() {
     <VStack w='full' h='full'>
       <PageHeader backHref='/manage' />
       <VStack w='full' h='full' p={4}>
-        <Card w='full' bg='cardBackground'>
+        <Card w='full' maxW='lg' bg='cardBackground'>
           <CardHeader>
             <Heading as='h2' size='md'>
               Creating a new card

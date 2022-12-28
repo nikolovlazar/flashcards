@@ -20,26 +20,6 @@ export default async function handler(
     case 'GET':
       res.status(200).json(await getFlashcard(slug as string));
       break;
-    case 'POST':
-      var category = await getCategory(categoryId);
-      if (!category) {
-        res.status(404).json({ message: 'Category not found' });
-        return;
-      }
-
-      res.status(200).json(
-        await createFlashcard({
-          question,
-          answer,
-          slug: sluggify(question),
-          category: {
-            connect: {
-              id: category.id,
-            },
-          },
-        })
-      );
-      break;
     case 'PUT':
       var category = await getCategory(categoryId);
       if (!category) {
@@ -57,7 +37,7 @@ export default async function handler(
         await updateFlashcard(id, {
           question,
           answer,
-          slug: sluggify(question),
+          slug: sluggify(question, { lower: true }),
           category: {
             connect: {
               id: category.id,

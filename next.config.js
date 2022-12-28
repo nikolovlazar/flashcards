@@ -8,7 +8,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/manage',
+        destination: '/manage/flashcards',
         permanent: true,
       },
     ];

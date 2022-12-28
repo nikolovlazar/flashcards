@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { FlashcardSidebarLink } from '../flashcard-sidebar-link';
 import { SidebarHeader } from './sidebar-header';
@@ -21,7 +22,18 @@ import { SidebarLink } from '../sidebar-link';
 import { useCategories, useFlashcards } from '../../../hooks';
 
 export const ManageSidebar = () => {
-  const [tabIndex, setTabIndex] = useState(0);
+  const { replace } = useRouter();
+  const pathname = usePathname();
+  const flashcardsActiveIndex = pathname?.startsWith('/manage/flashcards')
+    ? 0
+    : -1;
+  const categoriesActiveIndex = pathname?.startsWith('/manage/categories')
+    ? 1
+    : -1;
+
+  const [tabIndex, setTabIndex] = useState(
+    Math.max(flashcardsActiveIndex, categoriesActiveIndex)
+  );
 
   const { data: categories } = useCategories();
   const { data: flashcards } = useFlashcards();
@@ -41,7 +53,10 @@ export const ManageSidebar = () => {
         isFitted
         w='full'
         index={tabIndex}
-        onChange={(index) => setTabIndex(index)}
+        onChange={(index) => {
+          setTabIndex(index);
+          replace('/manage' + (index === 0 ? '/flashcards' : '/categories'));
+        }}
       >
         <TabList>
           <Tab>Flashcards</Tab>

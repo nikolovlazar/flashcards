@@ -13,11 +13,12 @@ import {
   IconButton,
   ScaleFade,
   Spacer,
+  Spinner,
   Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   BsArrowCounterclockwise,
   BsArrowRight,
@@ -25,8 +26,7 @@ import {
   BsShuffle,
 } from 'react-icons/bs';
 
-import { flashcards } from '../../../mock/cards';
-import { categories } from '../../../mock/categories';
+import { useCategory, useFlashcards } from '../../../hooks';
 import { PageHeader } from '../../../src/components/page-header';
 import { shuffleArray } from '../../../utils/array';
 
@@ -35,19 +35,31 @@ type Params = {
 };
 
 export default function Page({ params: { slug } }: { params: Params }) {
-  const category = categories.find((category) => category.slug === slug);
-  const categoryCards = flashcards.filter(
-    (card) => card.categoryId === category?.id
-  );
+  const { data: category, isLoading: loadingCategory } = useCategory(slug);
+
+  const isLoading = loadingCategory;
 
   const [flipped, setFlipped] = useState(false);
   const [index, setIndex] = useState(0);
-  const [displayedCards, setDisplayedCards] = useState(categoryCards);
+  const [displayedCards, setDisplayedCards] = useState(
+    category?.flashcards ?? []
+  );
 
-  const showCompletion = index === displayedCards.length && !flipped;
+  const showCompletion =
+    index === displayedCards?.length && !flipped && !isLoading;
+
+  useEffect(() => {
+    if (
+      category?.flashcards &&
+      category?.flashcards.length > 0 &&
+      displayedCards.length === 0
+    ) {
+      setDisplayedCards(category?.flashcards);
+    }
+  }, [category?.flashcards, displayedCards]);
 
   const shuffleCards = () => {
-    setDisplayedCards(shuffleArray(categoryCards));
+    setDisplayedCards(shuffleArray(category?.flashcards!));
     setIndex(0);
   };
 
@@ -88,7 +100,9 @@ export default function Page({ params: { slug } }: { params: Params }) {
         p={2}
       >
         <Box position='relative' boxSize='full'>
-          {!showCompletion ? (
+          {isLoading ? (
+            <Spinner size='xl' position='absolute' left='50%' />
+          ) : (
             <>
               <Card
                 bg='cardBackground'
@@ -172,7 +186,8 @@ export default function Page({ params: { slug } }: { params: Params }) {
                 </CardFooter>
               </Card>
             </>
-          ) : (
+          )}
+          {showCompletion && (
             <ScaleFade initialScale={0.25} in={showCompletion}>
               <Card
                 bg='cardBackground'
