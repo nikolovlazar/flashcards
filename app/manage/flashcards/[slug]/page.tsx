@@ -127,7 +127,7 @@ export default function Page({ params: { slug } }: { params: Params }) {
 
   return (
     <VStack w='full' h='full'>
-      <PageHeader backHref='/manage' />
+      <PageHeader backHref='/manage/flashcards' />
       <VStack w='full' h='full' p={4}>
         <Card w='full' maxW='lg' bg='cardBackground'>
           <CardHeader>
