@@ -24,16 +24,11 @@ import { useCategories, useFlashcards } from '../../../hooks';
 export const ManageSidebar = () => {
   const { replace } = useRouter();
   const pathname = usePathname();
-  const flashcardsActiveIndex = pathname?.startsWith('/manage/flashcards')
-    ? 0
-    : 0;
   const categoriesActiveIndex = pathname?.startsWith('/manage/categories')
     ? 1
     : 0;
 
-  const [tabIndex, setTabIndex] = useState(
-    Math.max(flashcardsActiveIndex, categoriesActiveIndex)
-  );
+  const [tabIndex, setTabIndex] = useState(Math.max(0, categoriesActiveIndex));
 
   const { data: categories } = useCategories();
   const { data: flashcards } = useFlashcards();
