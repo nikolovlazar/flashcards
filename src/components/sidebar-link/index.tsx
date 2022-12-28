@@ -6,11 +6,10 @@ import { Link } from '@chakra-ui/react';
 
 type SidebarItemProps = {
   title: string;
-  icon?: React.ReactNode;
   href: string;
 };
 
-export const SidebarLink = ({ title, icon, href }: SidebarItemProps) => {
+export const SidebarLink = ({ title, href }: SidebarItemProps) => {
   const pathname = usePathname();
   const isActive = pathname?.startsWith(href);
 
@@ -29,7 +28,6 @@ export const SidebarLink = ({ title, icon, href }: SidebarItemProps) => {
         bg: isActive ? 'linkActiveBackground' : 'linkHoverBackground',
       }}
     >
-      {icon}
       {title}
     </Link>
   );

@@ -22,7 +22,7 @@ export const FlashcardSidebarLink = ({
   slug,
 }: Props) => {
   const pathname = usePathname();
-  const isActive = pathname === `/manage/${slug}`;
+  const isActive = pathname === `/manage/flashcards/${slug}`;
   const category = categories.find((category) => category.id === categoryId);
 
   return (
@@ -42,7 +42,7 @@ export const FlashcardSidebarLink = ({
         >
           {category?.name}
         </Badge>
-        <LinkOverlay as={NextLink} href={`/manage/${slug}`}>
+        <LinkOverlay as={NextLink} href={`/manage/flashcards/${slug}`}>
           <Heading
             size='xs'
             color={isActive ? 'white' : 'gray.700'}

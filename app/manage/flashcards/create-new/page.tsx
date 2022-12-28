@@ -15,15 +15,11 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useReducer } from 'react';
 
-import { cards } from '../../../mock/cards';
-import { categories } from '../../../mock/categories';
-import { PageHeader } from '../../../src/components/page-header';
-
-type Params = {
-  slug: string;
-};
+import { categories } from '../../../../mock/categories';
+import { PageHeader } from '../../../../src/components/page-header';
 
 enum ValuesActionKind {
   SET_QUESTION = 'SET_QUESTION',
@@ -56,14 +52,16 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
   }
 }
 
-export default function Page({ params: { slug } }: { params: Params }) {
-  const card = cards.find((card) => card.slug === slug);
+export default function Page() {
   const [values, dispatch] = useReducer(valuesReducer, {
-    id: card?.id,
-    question: card?.question,
-    answer: card?.answer,
-    categoryId: card?.categoryId,
+    question: '',
+    answer: '',
+    categoryId: 0,
   });
+
+  const handleCreate = () => {
+    console.log(values);
+  };
 
   return (
     <VStack w='full' h='full'>
@@ -72,7 +70,7 @@ export default function Page({ params: { slug } }: { params: Params }) {
         <Card w='full' bg='cardBackground'>
           <CardHeader>
             <Heading as='h2' size='md'>
-              Editing {card?.question}
+              Creating a new card
             </Heading>
           </CardHeader>
           <CardBody>
@@ -120,10 +118,12 @@ export default function Page({ params: { slug } }: { params: Params }) {
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
-              <Button variant='ghost' colorScheme='red'>
-                Delete
+              <Button as={NextLink} href='/manage' variant='ghost'>
+                Cancel
               </Button>
-              <Button colorScheme='green'>Update</Button>
+              <Button colorScheme='green' onClick={handleCreate}>
+                Create
+              </Button>
             </HStack>
           </CardFooter>
         </Card>
