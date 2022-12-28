@@ -26,10 +26,10 @@ export const ManageSidebar = () => {
   const pathname = usePathname();
   const flashcardsActiveIndex = pathname?.startsWith('/manage/flashcards')
     ? 0
-    : -1;
+    : 0;
   const categoriesActiveIndex = pathname?.startsWith('/manage/categories')
     ? 1
-    : -1;
+    : 0;
 
   const [tabIndex, setTabIndex] = useState(
     Math.max(flashcardsActiveIndex, categoriesActiveIndex)
