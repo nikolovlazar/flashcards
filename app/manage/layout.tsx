@@ -9,6 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isSmall = useBreakpointValue({ base: true, md: false });
   const pathname = usePathname();
   const showSidebar =
+    pathname === '/manage' ||
     pathname === '/manage/flashcards' ||
     pathname === '/manage/categories' ||
     !isSmall;
