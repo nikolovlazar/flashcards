@@ -5,8 +5,10 @@ import {
   deleteFlashcard,
   getCategoryById,
   getFlashcard,
+  getUserFromSession,
   updateFlashcard,
 } from '../../../prisma/helpers';
+import { getSession } from '../../../utils/auth';
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,22 +17,32 @@ export default async function handler(
   const { slug } = req.query;
   const { id, question, answer, categoryId } = req.body;
 
+  const session = await getSession(req, res);
+  if (!session) return res.status(401).json({ message: 'Unauthorized' });
+
+  const user = await getUserFromSession(session);
+  if (!user) return res.status(401).json({ message: 'Unauthorized' });
+
   switch (req.method) {
     case 'GET':
-      res.status(200).json(await getFlashcard(slug as string));
+      var flashcard = await getFlashcard(slug as string);
+      if (!flashcard) return res.status(404).json({ message: 'Not found' });
+      if (flashcard.userId !== user.id)
+        return res.status(401).json({ message: 'Unauthorized' });
+
+      res.status(200).json(flashcard);
       break;
     case 'PUT':
       var category = await getCategoryById(categoryId);
-      if (!category) {
-        res.status(404).json({ message: 'Category not found' });
-        return;
-      }
+      if (!category)
+        return res.status(404).json({ message: 'Category not found' });
+      if (category.userId !== user.id)
+        return res.status(401).json({ message: 'Unauthorized' });
 
       var flashcard = await getFlashcard(slug as string);
-      if (!flashcard) {
-        res.status(404).json({ message: 'Flashcard not found' });
-        return;
-      }
+      if (!flashcard) return res.status(404).json({ message: 'Not found' });
+      if (flashcard.userId !== user.id)
+        return res.status(401).json({ message: 'Unauthorized' });
 
       res.status(200).json(
         await updateFlashcard(flashcard.id, {
@@ -46,10 +58,16 @@ export default async function handler(
       );
       break;
     case 'DELETE':
-      res.status(200).json(await deleteFlashcard(slug as string));
+      var flashcard = await getFlashcard(slug as string);
+
+      if (!flashcard) return res.status(404).json({ message: 'Not found' });
+      if (flashcard.userId !== user.id)
+        return res.status(401).json({ message: 'Unauthorized' });
+
+      res.status(200).json(flashcard);
       break;
     default:
-      res.setHeader('Allow', ['GET']);
+      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
       res.status(405).end(`Method ${req.method} Not Allowed`);
       break;
   }

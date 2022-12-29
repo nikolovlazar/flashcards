@@ -1,8 +1,13 @@
-import { Category, Flashcard, Prisma } from '@prisma/client';
+import { Category, Flashcard, Prisma, User } from '@prisma/client';
+import { Session } from 'next-auth';
 import prisma from '.';
 
-export const getFlashcards = async () => {
-  return await prisma.flashcard.findMany();
+export const getFlashcards = async (user: User) => {
+  return await prisma.flashcard.findMany({
+    where: {
+      userId: user.id,
+    },
+  });
 };
 
 export const getFlashcard = async (slug: string) => {
@@ -42,8 +47,12 @@ export const deleteFlashcard = async (slug: string) => {
   }
 };
 
-export const getCategories = async () => {
-  return await prisma.category.findMany();
+export const getCategories = async (user: User) => {
+  return await prisma.category.findMany({
+    where: {
+      userId: user.id,
+    },
+  });
 };
 
 export const getCategoryById = async (id: number) => {
@@ -92,4 +101,15 @@ export const deleteCategory = async (slug: string) => {
       },
     });
   }
+};
+
+export const getUserFromSession = async (session: Session) => {
+  if (!session.user) return null;
+  if (!session.user.email) return null;
+
+  return await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+  });
 };
