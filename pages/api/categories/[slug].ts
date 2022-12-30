@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
 
 import {
-  deleteCategory,
   getCategory,
   getUserFromSession,
   updateCategory,
@@ -14,7 +13,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { slug } = req.query;
-  const { id, name } = req.body;
+  const { name } = req.body;
 
   const session = await getSession(req, res);
   if (!session) return res.status(401).json({ message: 'Unauthorized' });
