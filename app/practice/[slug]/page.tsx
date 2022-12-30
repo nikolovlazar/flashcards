@@ -6,8 +6,6 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Collapse,
-  Fade,
   Flex,
   Heading,
   IconButton,
@@ -26,7 +24,7 @@ import {
   BsShuffle,
 } from 'react-icons/bs';
 
-import { useCategory, useFlashcards } from '../../../hooks';
+import { useCategory } from '../../../hooks';
 import { PageHeader } from '../../../src/components/page-header';
 import { shuffleArray } from '../../../utils/array';
 
@@ -62,8 +60,9 @@ export default function Page({ params: { slug } }: { params: Params }) {
   }, [category?.flashcards, displayedCards]);
 
   const shuffleCards = () => {
-    setDisplayedCards(shuffleArray(category?.flashcards!));
+    setDisplayedCards(shuffleArray([...displayedCards]));
     setIndex(0);
+    setFlipped(false);
   };
 
   const nextCard = () => {

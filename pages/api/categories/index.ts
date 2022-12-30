@@ -25,6 +25,8 @@ export default async function handler(
     case 'POST':
       const { name } = req.body;
 
+      if (!name) return res.status(400).json({ message: 'Name is required' });
+
       res.status(200).json(
         await createCategory({
           name,

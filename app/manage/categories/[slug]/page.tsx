@@ -83,16 +83,18 @@ export default function Page({ params: { slug } }: { params: Params }) {
             </Heading>
           </CardHeader>
           <CardBody>
-            <VStack>
-              <FormControl>
-                <FormLabel>Name</FormLabel>
-                <Input
-                  placeholder='React'
-                  value={name}
-                  onChange={(e) => setName(e.currentTarget.value)}
-                />
-              </FormControl>
-            </VStack>
+            <form id='edit-category'>
+              <VStack>
+                <FormControl isRequired>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    placeholder='React'
+                    value={name}
+                    onChange={(e) => setName(e.currentTarget.value)}
+                  />
+                </FormControl>
+              </VStack>
+            </form>
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
@@ -126,6 +128,8 @@ export default function Page({ params: { slug } }: { params: Params }) {
                 colorScheme='green'
                 onClick={handleUpdate}
                 isLoading={updating}
+                form='edit-category'
+                type='submit'
               >
                 Update
               </Button>

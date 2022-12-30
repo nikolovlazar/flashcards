@@ -55,16 +55,18 @@ export default function Page() {
             </Heading>
           </CardHeader>
           <CardBody>
-            <VStack>
-              <FormControl>
-                <FormLabel>Name</FormLabel>
-                <Input
-                  placeholder='React'
-                  value={name}
-                  onChange={(e) => setName(e.currentTarget.value)}
-                />
-              </FormControl>
-            </VStack>
+            <form id='create-category'>
+              <VStack>
+                <FormControl isRequired>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    placeholder='React'
+                    value={name}
+                    onChange={(e) => setName(e.currentTarget.value)}
+                  />
+                </FormControl>
+              </VStack>
+            </form>
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
@@ -75,6 +77,8 @@ export default function Page() {
                 colorScheme='green'
                 isLoading={isLoading}
                 onClick={handleCreate}
+                type='submit'
+                form='create-category'
               >
                 Create
               </Button>

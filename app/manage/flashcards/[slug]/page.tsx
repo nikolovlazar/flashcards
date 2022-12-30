@@ -99,6 +99,13 @@ export default function Page({ params: { slug } }: { params: Params }) {
   }, [flashcard]);
 
   const handleUpdate = async () => {
+    if (
+      values.question.length === 0 ||
+      values.answer.length === 0 ||
+      values.categoryId === 0
+    )
+      return;
+
     setUpdating(true);
     await update(slug, {
       question: values.question,
@@ -136,47 +143,49 @@ export default function Page({ params: { slug } }: { params: Params }) {
             </Heading>
           </CardHeader>
           <CardBody>
-            <VStack>
-              <FormControl>
-                <FormLabel>Question</FormLabel>
-                <Input
-                  placeholder='What is React?'
-                  value={values?.question}
-                  onChange={(e) =>
-                    dispatch({
-                      type: ValuesActionKind.SET_QUESTION,
-                      payload: e.currentTarget.value,
-                    })
-                  }
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Answer</FormLabel>
-                <Textarea
-                  placeholder='In hac habitasse platea dictumst. Nam auctor, metus imperdiet commodo ultricies, ante libero malesuada libero, a hendrerit ex nisl a tellus.'
-                  value={values?.answer}
-                  onChange={(e) =>
-                    dispatch({
-                      type: ValuesActionKind.SET_ANSWER,
-                      payload: e.currentTarget.value,
-                    })
-                  }
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  placeholder='Select category'
-                  value={values?.categoryId}
-                >
-                  {categories?.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            </VStack>
+            <form id='edit-flashcard'>
+              <VStack>
+                <FormControl isRequired>
+                  <FormLabel>Question</FormLabel>
+                  <Input
+                    placeholder='What is React?'
+                    value={values?.question}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ValuesActionKind.SET_QUESTION,
+                        payload: e.currentTarget.value,
+                      })
+                    }
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Answer</FormLabel>
+                  <Textarea
+                    placeholder='In hac habitasse platea dictumst. Nam auctor, metus imperdiet commodo ultricies, ante libero malesuada libero, a hendrerit ex nisl a tellus.'
+                    value={values?.answer}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ValuesActionKind.SET_ANSWER,
+                        payload: e.currentTarget.value,
+                      })
+                    }
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    placeholder='Select category'
+                    value={values?.categoryId}
+                  >
+                    {categories?.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              </VStack>
+            </form>
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
@@ -210,6 +219,8 @@ export default function Page({ params: { slug } }: { params: Params }) {
                 colorScheme='green'
                 isLoading={updating}
                 onClick={handleUpdate}
+                type='submit'
+                form='edit-flashcard'
               >
                 Update
               </Button>

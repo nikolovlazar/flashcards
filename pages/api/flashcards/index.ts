@@ -26,6 +26,11 @@ export default async function handler(
     case 'POST':
       const { question, answer, categoryId } = req.body;
 
+      if (question.length === 0 || answer.length === 0)
+        return res
+          .status(400)
+          .json({ message: 'Question and answer required' });
+
       var category = await getCategoryById(Number(categoryId));
       if (!category)
         return res.status(404).json({ message: 'Category not found' });

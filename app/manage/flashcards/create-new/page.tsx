@@ -73,6 +73,13 @@ export default function Page() {
   };
 
   const handleCreate = async () => {
+    if (
+      values.question.length === 0 ||
+      values.answer.length === 0 ||
+      values.categoryId === 0
+    )
+      return;
+
     setCreating(true);
     await create({
       question: values.question,
@@ -99,53 +106,55 @@ export default function Page() {
             </Heading>
           </CardHeader>
           <CardBody>
-            <VStack>
-              <FormControl>
-                <FormLabel>Question</FormLabel>
-                <Input
-                  placeholder='What is React?'
-                  value={values?.question}
-                  onChange={(e) =>
-                    dispatch({
-                      type: ValuesActionKind.SET_QUESTION,
-                      payload: e.currentTarget.value,
-                    })
-                  }
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Answer</FormLabel>
-                <Textarea
-                  placeholder='In hac habitasse platea dictumst. Nam auctor, metus imperdiet commodo ultricies, ante libero malesuada libero, a hendrerit ex nisl a tellus.'
-                  value={values?.answer}
-                  onChange={(e) =>
-                    dispatch({
-                      type: ValuesActionKind.SET_ANSWER,
-                      payload: e.currentTarget.value,
-                    })
-                  }
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  placeholder='Select category'
-                  value={values?.categoryId}
-                  onChange={(e) => {
-                    dispatch({
-                      type: ValuesActionKind.SET_CATEGORY,
-                      payload: e.currentTarget.value,
-                    });
-                  }}
-                >
-                  {categories?.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            </VStack>
+            <form id='create-flashcard'>
+              <VStack>
+                <FormControl isRequired>
+                  <FormLabel>Question</FormLabel>
+                  <Input
+                    placeholder='What is React?'
+                    value={values?.question}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ValuesActionKind.SET_QUESTION,
+                        payload: e.currentTarget.value,
+                      })
+                    }
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Answer</FormLabel>
+                  <Textarea
+                    placeholder='In hac habitasse platea dictumst. Nam auctor, metus imperdiet commodo ultricies, ante libero malesuada libero, a hendrerit ex nisl a tellus.'
+                    value={values?.answer}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ValuesActionKind.SET_ANSWER,
+                        payload: e.currentTarget.value,
+                      })
+                    }
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    placeholder='Select category'
+                    value={values?.categoryId}
+                    onChange={(e) => {
+                      dispatch({
+                        type: ValuesActionKind.SET_CATEGORY,
+                        payload: e.currentTarget.value,
+                      });
+                    }}
+                  >
+                    {categories?.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              </VStack>
+            </form>
           </CardBody>
           <CardFooter>
             <HStack w='full' justifyContent='flex-end'>
@@ -156,6 +165,8 @@ export default function Page() {
                 colorScheme='green'
                 isLoading={creating}
                 onClick={handleCreate}
+                type='submit'
+                form='create-flashcard'
               >
                 Create
               </Button>

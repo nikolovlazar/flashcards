@@ -42,6 +42,8 @@ export default async function handler(
       if (!flashcard) return res.status(404).json({ message: 'Not found' });
       if (flashcard.userId !== user.id)
         return res.status(401).json({ message: 'Unauthorized' });
+      if (!question || !answer || question.length === 0 || answer.length === 0)
+        return res.status(400).json({ message: 'Invalid data' });
 
       res.status(200).json(
         await updateFlashcard(flashcard.id, {
