@@ -1,3 +1,4 @@
+import { withSentry } from '@sentry/nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
 
@@ -9,10 +10,7 @@ import {
 } from '../../../prisma/helpers';
 import { getSession } from '../../../utils/auth';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
   const { slug } = req.query;
   const { question, answer, categoryId } = req.body;
 
@@ -72,4 +70,4 @@ export default async function handler(
       res.status(405).end(`Method ${req.method} Not Allowed`);
       break;
   }
-}
+});
