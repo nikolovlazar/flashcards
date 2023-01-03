@@ -1,5 +1,3 @@
-'use client';
-
 import NextLink from 'next/link';
 import {
   Button,
@@ -15,31 +13,22 @@ import {
 import { useEffect, useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { usePathname, useRouter } from 'next/navigation';
-import { Flashcard } from '@prisma/client';
+import { Category } from '@prisma/client';
 
 import { FlashcardSidebarLink } from '../flashcard-sidebar-link';
 import { SidebarHeader } from './sidebar-header';
 import { SidebarLink } from '../sidebar-link';
-import { useCategories, useFlashcards } from '../../../hooks';
+import { useCategories, useFlashcards } from '../../hooks';
 
 export const ManageSidebar = () => {
   const { replace } = useRouter();
   const pathname = usePathname();
-  const categoriesActiveIndex = pathname?.startsWith('/manage/categories')
-    ? 1
-    : 0;
+  const activeIndex = pathname?.startsWith('/manage/categories') ? 1 : 0;
 
-  const [tabIndex, setTabIndex] = useState(Math.max(0, categoriesActiveIndex));
+  const [tabIndex, setTabIndex] = useState(Math.max(0, activeIndex));
 
-  const { data: categories } = useCategories();
-  const { fetchAll: fetchFlashcards } = useFlashcards();
-  const [flashcards, setFlashcards] = useState<Flashcard[]>();
-
-  useEffect(() => {
-    if (!flashcards) {
-      fetchFlashcards().then((data) => setFlashcards(data));
-    }
-  }, [flashcards, fetchFlashcards]);
+  const { categories } = useCategories();
+  const { flashcards } = useFlashcards();
 
   return (
     <VStack

@@ -1,8 +1,8 @@
-import { withSentry } from '@sentry/nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
 
 import {
+  deleteFlashcard,
   getCategoryById,
   getFlashcard,
   getUserFromSession,
@@ -10,7 +10,7 @@ import {
 } from '../../../prisma/helpers';
 import { getSession } from '../../../utils/auth';
 
-export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const { slug } = req.query;
   const { question, answer, categoryId } = req.body;
 
@@ -22,7 +22,7 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     case 'GET':
-      var flashcard = await getFlashcard(slug as string);
+      var flashcard = await getFlashcard(slug as string, user);
       if (!flashcard) return res.status(404).json({ message: 'Not found' });
       if (flashcard.userId !== user.id)
         return res.status(401).json({ message: 'Unauthorized' });
@@ -36,7 +36,7 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       if (category.userId !== user.id)
         return res.status(401).json({ message: 'Unauthorized' });
 
-      var flashcard = await getFlashcard(slug as string);
+      var flashcard = await getFlashcard(slug as string, user);
       if (!flashcard) return res.status(404).json({ message: 'Not found' });
       if (flashcard.userId !== user.id)
         return res.status(401).json({ message: 'Unauthorized' });
@@ -57,17 +57,19 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       );
       break;
     case 'DELETE':
-      var flashcard = await getFlashcard(slug as string);
+      var flashcard = await getFlashcard(slug as string, user);
 
       if (!flashcard) return res.status(404).json({ message: 'Not found' });
       if (flashcard.userId !== user.id)
         return res.status(401).json({ message: 'Unauthorized' });
 
-      res.status(200).json(flashcard);
+      const deleted = await deleteFlashcard(slug as string, user);
+
+      res.status(200).json(deleted);
       break;
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
       res.status(405).end(`Method ${req.method} Not Allowed`);
       break;
   }
-});
+}

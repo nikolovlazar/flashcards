@@ -1,13 +1,11 @@
-'use client';
-
 import { VStack } from '@chakra-ui/react';
 
-import { useCategories } from '../../../hooks';
+import { useCategories } from '../../hooks';
 import { SidebarLink } from '../sidebar-link';
 import { SidebarHeader } from './sidebar-header';
 
 export const PracticeSidebar = () => {
-  const { data: categories } = useCategories();
+  const { categories } = useCategories();
 
   return (
     <VStack

@@ -1,15 +1,15 @@
-import { withSentry } from '@sentry/nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
 
 import {
+  deleteCategory,
   getCategory,
   getUserFromSession,
   updateCategory,
 } from '../../../prisma/helpers';
 import { getSession } from '../../../utils/auth';
 
-export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const { slug } = req.query;
   const { name } = req.body;
 
@@ -21,7 +21,7 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     case 'GET':
-      var category = await getCategory(slug as string);
+      var category = await getCategory(slug as string, user);
       if (!category)
         return res.status(404).json({ message: 'Category not found' });
       if (category.userId !== user.id)
@@ -30,7 +30,7 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json(category);
       break;
     case 'PUT':
-      var category = await getCategory(slug as string);
+      var category = await getCategory(slug as string, user);
       if (!category)
         return res.status(404).json({ message: 'Category not found' });
       if (category.userId !== user.id)
@@ -44,17 +44,19 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       );
       break;
     case 'DELETE':
-      var category = await getCategory(slug as string);
+      var category = await getCategory(slug as string, user);
       if (!category)
         return res.status(404).json({ message: 'Category not found' });
       if (category.userId !== user.id)
         return res.status(401).json({ message: 'Unauthorized' });
 
-      res.status(200).json(category);
+      const deleted = await deleteCategory(slug as string, user);
+
+      res.status(200).json(deleted);
       break;
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
       res.status(405).end(`Method ${req.method} Not Allowed`);
       break;
   }
-});
+}

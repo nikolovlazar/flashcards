@@ -1,11 +1,10 @@
-'use client';
-
+import { PropsWithChildren } from 'react';
 import { Box, HStack, useBreakpointValue } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 
-import { ManageSidebar } from '../../src/components/sidebars';
+import { ManageSidebar } from '../components/sidebars';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function ManageLayout({ children }: PropsWithChildren) {
   const isSmall = useBreakpointValue({ base: true, md: false });
   const pathname = usePathname();
   const showSidebar =

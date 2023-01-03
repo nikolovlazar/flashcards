@@ -1,22 +1,21 @@
-'use client';
-
-import type { Flashcard } from '@prisma/client';
+import useSWR, { mutate } from 'swr';
+import type { Category, Flashcard } from '@prisma/client';
 import * as Sentry from '@sentry/nextjs';
 
-export function useFlashcards() {
-  const fetchAll = async (): Promise<Flashcard[]> => {
+export function useCategories() {
+  const { data: categories } = useSWR<Category[]>('/api/categories', () => {
     return new Promise((resolve, reject) => {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
-          name: 'fetch-flashcards',
+          name: 'fetch-categories',
         });
         scope.setSpan(transaction);
         const span = transaction?.startChild({
           op: 'http.client',
-          description: 'Fetching flashcards',
+          description: 'Fetching categories',
         });
 
-        const res = await fetch('/api/flashcards', {
+        const res = await fetch('/api/categories', {
           headers: {
             'sentry-trace': transaction?.toTraceparent(),
           },
@@ -36,20 +35,58 @@ export function useFlashcards() {
         }
       });
     });
-  };
+  });
 
-  const fetchBySlug = async (slug: string) => {
-    // eve komentarce
-    const x = 15 + 14;
-    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+  const create = async (name: string) => {
+    const transaction = Sentry.startTransaction({ name: 'create-category' });
     const span = transaction.startChild({
       op: 'http.client',
-      description: 'Fetching flashcard by slug',
+      description: 'Creating flashcard',
+    });
+    const res = await fetch('/api/categories', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    });
+
+    if (res.ok) {
+      mutate('/api/categories');
+      span.setStatus(`${res.status}-${res.statusText}`);
+      span.setTag('http.status_code', res.status);
+      span.finish();
+      transaction.finish();
+      return res.json();
+    } else {
+      span.setStatus('error');
+      span.finish();
+      transaction.finish();
+      throw new Error(`Failed to create category. Reason: ${res.statusText}`);
+    }
+  };
+
+  return {
+    categories,
+    create,
+  };
+}
+
+export function useCategory(slug?: string) {
+  const { data: category, isLoading } = useSWR<
+    Category & { flashcards?: Flashcard[] }
+  >(slug && `/api/categories/${slug}`, async () => {
+    const transaction = Sentry.startTransaction({ name: 'fetch-category' });
+    const span = transaction.startChild({
+      op: 'http.client',
+      description: 'Fetching category by slug',
       tags: {
         slug,
       },
     });
-    const res = await fetch(`/api/flashcards/${slug}`, {
+    const res = await fetch(`/api/categories/${slug}`, {
       headers: {
         'sentry-trace': transaction.toTraceparent(),
       },
@@ -59,53 +96,26 @@ export function useFlashcards() {
       span.setStatus(`${res.status}-${res.statusText}`);
       span.setTag('http.status_code', res.status);
       span.finish();
+      transaction.finish();
       return res.json();
     } else {
       span.setStatus('error');
       span.finish();
-      throw new Error(`Failed to fetch flashcards. Reason: ${res.statusText}`);
+      transaction.finish();
+      throw new Error(`Failed to fetch categories. Reason: ${res.statusText}`);
     }
-  };
+  });
 
-  const create = async (
-    data: Pick<Flashcard, 'question' | 'answer' | 'categoryId'>
-  ) => {
-    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+  const remove = async () => {
+    const transaction = Sentry.startTransaction({ name: 'remove-category' });
     const span = transaction.startChild({
       op: 'http.client',
-      description: 'Creating flashcard',
-    });
-    const res = await fetch('/api/flashcards', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (res.ok) {
-      span.setStatus(`${res.status}-${res.statusText}`);
-      span.setTag('http.status_code', res.status);
-      span.finish();
-      return res.json();
-    } else {
-      span.setStatus('error');
-      span.finish();
-      throw new Error(`Failed to create flashcard. Reason: ${res.statusText}`);
-    }
-  };
-
-  const remove = async (slug: string) => {
-    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
-    const span = transaction.startChild({
-      op: 'http.client',
-      description: 'Deleting flashcard',
+      description: 'Deleting category',
       tags: {
         slug,
       },
     });
-
-    const res = await fetch(`/api/flashcards/${slug}`, {
+    const res = await fetch(`/api/categories/${slug}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -113,36 +123,42 @@ export function useFlashcards() {
     });
 
     if (res.ok) {
+      mutate('/api/categories');
       span.setStatus(`${res.status}-${res.statusText}`);
       span.setTag('http.status_code', res.status);
       span.finish();
+      transaction.finish();
       return res.json();
     } else {
       span.setStatus('error');
       span.finish();
-      throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
+      transaction.finish();
+      throw new Error(`Failed to delete category. Reason: ${res.statusText}`);
     }
   };
 
-  const update = async (slug: string, data: Partial<Flashcard>) => {
-    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+  const update = async (slug: string, name: string) => {
+    const transaction = Sentry.startTransaction({ name: 'update-category' });
     const span = transaction.startChild({
       op: 'http.client',
-      description: 'Updating flashcard',
+      description: 'Updating category',
       tags: {
         slug,
       },
     });
-
-    const res = await fetch(`/api/flashcards/${slug}`, {
+    const res = await fetch(`/api/categories/${slug}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        name,
+      }),
     });
 
     if (res.ok) {
+      mutate(`/api/categories/${slug}`);
+      mutate('/api/categories');
       span.setStatus(`${res.status}-${res.statusText}`);
       span.setTag('http.status_code', res.status);
       span.finish();
@@ -150,14 +166,13 @@ export function useFlashcards() {
     } else {
       span.setStatus('error');
       span.finish();
-      throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
+      throw new Error(`Failed to delete category. Reason: ${res.statusText}`);
     }
   };
 
   return {
-    fetchAll,
-    fetchBySlug,
-    create,
+    category,
+    isLoading,
     remove,
     update,
   };

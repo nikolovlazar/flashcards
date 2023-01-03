@@ -1,5 +1,3 @@
-'use client';
-
 import { BsArrowLeftShort } from 'react-icons/bs';
 import NextLink from 'next/link';
 import { HStack, Icon, IconButton } from '@chakra-ui/react';

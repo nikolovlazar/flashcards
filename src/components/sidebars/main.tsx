@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Avatar,
   Drawer,
@@ -14,7 +12,6 @@ import {
   MenuList,
   Skeleton,
   SkeletonCircle,
-  SkeletonText,
   Spacer,
   Text,
   useBreakpointValue,
@@ -37,8 +34,8 @@ export const MainSidebar = () => {
       <DrawerOverlay />
       <DrawerContent maxW='250px'>
         <DrawerCloseButton />
-        <VStack alignItems='flex-start' padding={3} spacing={8} h='full'>
-          <Title />
+        <VStack alignItems='flex-start' mt={9} padding={3} spacing={8} h='full'>
+          <UserElement />
           <Links />
           <Spacer />
           <ThemeSwitcher />
@@ -56,7 +53,7 @@ export const MainSidebar = () => {
       spacing={8}
       alignItems='flex-start'
     >
-      <Title />
+      <UserElement />
       <Links />
       <Spacer />
       <ThemeSwitcher />
@@ -64,7 +61,7 @@ export const MainSidebar = () => {
   );
 };
 
-function Title() {
+function UserElement() {
   const { data, status } = useSession();
 
   if (status === 'loading') {

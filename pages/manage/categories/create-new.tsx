@@ -1,5 +1,3 @@
-'use client';
-
 import NextLink from 'next/link';
 import {
   Button,
@@ -15,10 +13,12 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
-import { useCategories } from '../../../../hooks';
-import { PageHeader } from '../../../../src/components/page-header';
+import { useCategories } from '../../../src/hooks';
+import { PageHeader } from '../../../src/components/page-header';
+import MainLayout from '../../../src/layouts/main';
+import ManageLayout from '../../../src/layouts/manage';
 
 export default function Page() {
   const { create } = useCategories();
@@ -89,3 +89,11 @@ export default function Page() {
     </VStack>
   );
 }
+
+Page.getLayout = (page: ReactNode) => {
+  return (
+    <MainLayout>
+      <ManageLayout>{page}</ManageLayout>
+    </MainLayout>
+  );
+};

@@ -1,8 +1,15 @@
 import { unstable_getServerSession } from 'next-auth/next';
-import type { NextApiRequest, NextApiResponse } from 'next/types';
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next/types';
 
 import { authOptions } from '../pages/api/auth/[...nextauth]';
 
-export const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
+type Req = GetServerSidePropsContext['req'] | NextApiRequest;
+type Res = GetServerSidePropsContext['res'] | NextApiResponse;
+
+export const getSession = async (req: Req, res: Res) => {
   return await unstable_getServerSession(req, res, authOptions);
 };

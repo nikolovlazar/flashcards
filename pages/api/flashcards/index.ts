@@ -1,4 +1,3 @@
-import { withSentry } from '@sentry/nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
 
@@ -10,7 +9,7 @@ import {
 } from '../../../prisma/helpers';
 import { getSession } from '../../../utils/auth';
 
-export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession(req, res);
   if (!session) return res.status(401).json({ message: 'Unauthorized' });
 
@@ -58,4 +57,4 @@ export default withSentry(async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(405).end(`Method ${req.method} Not Allowed`);
       break;
   }
-});
+}

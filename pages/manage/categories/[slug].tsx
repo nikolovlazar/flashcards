@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Button,
   Card,
@@ -23,53 +21,79 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useState, useEffect } from 'react';
+import type { Category } from '@prisma/client';
+import type { GetServerSideProps } from 'next/types';
 
-import { useCategories, useCategory } from '../../../../hooks';
-import { PageHeader } from '../../../../src/components/page-header';
+import { useCategory } from '../../../src/hooks';
+import { PageHeader } from '../../../src/components/page-header';
+import MainLayout from '../../../src/layouts/main';
+import ManageLayout from '../../../src/layouts/manage';
+import { getSession } from '../../../utils/auth';
+import { getCategory, getUserFromSession } from '../../../prisma/helpers';
 
-type Params = {
+type Props = {
+  category: Category;
   slug: string;
 };
 
-export default function Page({ params: { slug } }: { params: Params }) {
+export default function Page({ category, slug }: Props) {
   const toast = useToast();
   const { replace } = useRouter();
-  const { remove, update } = useCategories();
-  const { data: category } = useCategory(slug);
 
-  const [name, setName] = useState(category?.name ?? '');
+  const { remove, update } = useCategory(slug);
+
+  const [name, setName] = useState(category.name);
   const [removing, setRemoving] = useState(false);
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    if (category && name.length === 0) {
+    if (category.name !== name) {
       setName(category.name);
     }
-  }, [category, name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
 
   const handleUpdate = async () => {
-    setUpdating(true);
-    const updated = await update(slug, name);
-    replace(`/manage/categories/${updated.slug}`);
-    toast({
-      status: 'success',
-      title: 'Category updated',
-      description: `Category ${updated.name} has been updated`,
-    });
-    setUpdating(false);
+    try {
+      setUpdating(true);
+      const updated = await update(slug, name);
+      replace(`/manage/categories/${updated.slug}`);
+      toast({
+        status: 'success',
+        title: 'Category updated',
+        description: `Category ${updated.name} has been updated`,
+      });
+    } catch (e) {
+      toast({
+        status: 'error',
+        title: 'Error updating category',
+        description: (e as Error).message,
+      });
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const handleRemove = async () => {
-    setRemoving(true);
-    await remove(slug);
-    replace('/manage/categories');
-    toast({
-      status: 'success',
-      title: 'Category deleted',
-      description: `Category ${category?.name} has been deleted`,
-    });
-    setRemoving(false);
+    try {
+      setRemoving(true);
+      await remove();
+      replace('/manage/categories');
+      toast({
+        status: 'success',
+        title: 'Category deleted',
+        description: `Category ${category?.name} has been deleted`,
+      });
+    } catch (e) {
+      toast({
+        status: 'error',
+        title: 'Error deleting category',
+        description: (e as Error).message,
+      });
+    } finally {
+      setRemoving(false);
+    }
   };
 
   return (
@@ -140,3 +164,47 @@ export default function Page({ params: { slug } }: { params: Params }) {
     </VStack>
   );
 }
+
+Page.getLayout = (page: ReactNode) => {
+  return (
+    <MainLayout>
+      <ManageLayout>{page}</ManageLayout>
+    </MainLayout>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+  const session = await getSession(ctx.req, ctx.res);
+  if (!session)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const user = await getUserFromSession(session);
+  if (!user)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const slug = ctx.params?.slug as string;
+  const category = await getCategory(slug, user);
+
+  if (!category) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      category,
+      slug,
+    },
+  };
+};

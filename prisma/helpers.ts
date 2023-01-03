@@ -10,10 +10,11 @@ export const getFlashcards = async (user: User) => {
   });
 };
 
-export const getFlashcard = async (slug: string) => {
+export const getFlashcard = async (slug: string, user: User) => {
   return await prisma.flashcard.findFirst({
     where: {
       slug,
+      userId: user.id,
     },
   });
 };
@@ -36,8 +37,8 @@ export const updateFlashcard = async (
   });
 };
 
-export const deleteFlashcard = async (slug: string) => {
-  const flashcard = await getFlashcard(slug);
+export const deleteFlashcard = async (slug: string, user: User) => {
+  const flashcard = await getFlashcard(slug, user);
   if (flashcard) {
     return await prisma.flashcard.delete({
       where: {
@@ -63,10 +64,11 @@ export const getCategoryById = async (id: number) => {
   });
 };
 
-export const getCategory = async (slug: string) => {
+export const getCategory = async (slug: string, user: User) => {
   return await prisma.category.findFirst({
     where: {
       slug,
+      userId: user.id,
     },
     include: {
       flashcards: true,
@@ -92,8 +94,8 @@ export const updateCategory = async (
   });
 };
 
-export const deleteCategory = async (slug: string) => {
-  const category = await getCategory(slug);
+export const deleteCategory = async (slug: string, user: User) => {
+  const category = await getCategory(slug, user);
   if (category) {
     return await prisma.category.delete({
       where: {

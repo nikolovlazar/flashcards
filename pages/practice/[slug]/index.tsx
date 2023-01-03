@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Box,
   Card,
@@ -16,27 +14,28 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import {
   BsArrowCounterclockwise,
   BsArrowRight,
   BsEye,
   BsShuffle,
 } from 'react-icons/bs';
+import type { GetServerSideProps } from 'next/types';
+import type { Category, Flashcard } from '@prisma/client';
 
-import { useCategory } from '../../../hooks';
 import { PageHeader } from '../../../src/components/page-header';
+import MainLayout from '../../../src/layouts/main';
+import PracticeLayout from '../../../src/layouts/practice';
 import { shuffleArray } from '../../../utils/array';
+import { getSession } from '../../../utils/auth';
+import { getCategory, getUserFromSession } from '../../../prisma/helpers';
 
-type Params = {
-  slug: string;
+type Props = {
+  category: Category & { flashcards?: Flashcard[] };
 };
 
-export default function Page({ params: { slug } }: { params: Params }) {
-  const { data: category, isLoading: loadingCategory } = useCategory(slug);
-
-  const isLoading = loadingCategory;
-
+export default function Page({ category }: Props) {
   const [flipped, setFlipped] = useState(false);
   const [index, setIndex] = useState(0);
   const [displayedCards, setDisplayedCards] = useState(
@@ -46,7 +45,6 @@ export default function Page({ params: { slug } }: { params: Params }) {
   const showCompletion =
     index === displayedCards?.length &&
     !flipped &&
-    !isLoading &&
     (category?.flashcards?.length ?? 0) > 0;
 
   useEffect(() => {
@@ -58,6 +56,10 @@ export default function Page({ params: { slug } }: { params: Params }) {
       setDisplayedCards(category?.flashcards);
     }
   }, [category?.flashcards, displayedCards]);
+
+  useEffect(() => {
+    setDisplayedCards(category?.flashcards ?? []);
+  }, [category]);
 
   const shuffleCards = () => {
     setDisplayedCards(shuffleArray([...displayedCards]));
@@ -102,9 +104,7 @@ export default function Page({ params: { slug } }: { params: Params }) {
         p={2}
       >
         <Box position='relative' boxSize='full'>
-          {isLoading && <Spinner size='xl' position='absolute' left='50%' />}
-
-          {!isLoading && (category?.flashcards?.length ?? 0) === 0 && (
+          {(category?.flashcards?.length ?? 0) === 0 && (
             <Heading
               position='absolute'
               left='50%'
@@ -240,3 +240,47 @@ export default function Page({ params: { slug } }: { params: Params }) {
     </VStack>
   );
 }
+
+Page.getLayout = (page: ReactNode) => {
+  return (
+    <MainLayout>
+      <PracticeLayout>{page}</PracticeLayout>
+    </MainLayout>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+  const session = await getSession(ctx.req, ctx.res);
+  if (!session)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const user = await getUserFromSession(session);
+  if (!user)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const slug = ctx.params?.slug as string;
+  const category = await getCategory(slug, user);
+
+  if (!category) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      category,
+      slug,
+    },
+  };
+};

@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Button,
   Card,
@@ -16,11 +14,17 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
+import type { Category } from '@prisma/client';
+import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
-import { useReducer, useState } from 'react';
+import { type ReactNode, useReducer, useState, useEffect } from 'react';
+import { getCategories, getUserFromSession } from '../../../prisma/helpers';
 
-import { PageHeader } from '../../../../src/components/page-header';
-import { useCategories, useFlashcards } from '../../../../hooks';
+import { PageHeader } from '../../../src/components/page-header';
+import { useCategories, useFlashcards } from '../../../src/hooks';
+import MainLayout from '../../../src/layouts/main';
+import ManageLayout from '../../../src/layouts/manage';
+import { getSession } from '../../../utils/auth';
 
 enum ValuesActionKind {
   SET_QUESTION = 'SET_QUESTION',
@@ -53,8 +57,11 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
   }
 }
 
-export default function Page() {
-  const { data: categories } = useCategories();
+type Props = {
+  categories: Category[];
+};
+
+export default function Page({ categories }: Props) {
   const { create } = useFlashcards();
   const toast = useToast();
 
@@ -177,3 +184,39 @@ export default function Page() {
     </VStack>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+  const session = await getSession(ctx.req, ctx.res);
+  if (!session)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const user = await getUserFromSession(session);
+  if (!user)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const categories = await getCategories(user);
+
+  return {
+    props: {
+      categories,
+    },
+  };
+};
+
+Page.getLayout = (page: ReactNode) => {
+  return (
+    <MainLayout>
+      <ManageLayout>{page}</ManageLayout>
+    </MainLayout>
+  );
+};

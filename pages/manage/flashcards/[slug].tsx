@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Button,
   Card,
@@ -24,16 +22,21 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { Flashcard } from '@prisma/client';
-import { useEffect, useReducer, useState } from 'react';
-
-import { PageHeader } from '../../../../src/components/page-header';
-import { useCategories, useFlashcards } from '../../../../hooks';
+import type { Category, Flashcard } from '@prisma/client';
+import { type ReactNode, useReducer, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Params = {
-  slug: string;
-};
+import { PageHeader } from '../../../src/components/page-header';
+import { useFlashcard } from '../../../src/hooks';
+import MainLayout from '../../../src/layouts/main';
+import ManageLayout from '../../../src/layouts/manage';
+import { GetServerSideProps } from 'next';
+import {
+  getUserFromSession,
+  getCategories,
+  getFlashcard,
+} from '../../../prisma/helpers';
+import { getSession } from '../../../utils/auth';
 
 enum ValuesActionKind {
   SET_QUESTION = 'SET_QUESTION',
@@ -69,30 +72,26 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
   }
 }
 
-export default function Page({ params: { slug } }: { params: Params }) {
-  const { replace } = useRouter();
-  const { data: categories } = useCategories();
-  const { fetchBySlug, update, remove } = useFlashcards();
+type Props = {
+  categories: Category[];
+  flashcard: Flashcard;
+  slug: string;
+};
+
+export default function Page({ categories, flashcard, slug }: Props) {
+  const router = useRouter();
+  const { update, remove } = useFlashcard(slug);
   const toast = useToast();
 
-  const [flashcard, setFlashcard] = useState<Flashcard>();
   const [values, dispatch] = useReducer(valuesReducer, {
-    id: flashcard?.id,
-    question: flashcard?.question,
-    answer: flashcard?.answer,
-    categoryId: flashcard?.categoryId,
+    id: flashcard.id,
+    question: flashcard.question,
+    answer: flashcard.answer,
+    categoryId: flashcard.categoryId,
   });
-  const [updating, setUpdating] = useState(false);
-  const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
-    if (!flashcard) {
-      fetchBySlug(slug).then((flashcard) => setFlashcard(flashcard));
-    }
-  }, [flashcard, setFlashcard, fetchBySlug, slug]);
-
-  useEffect(() => {
-    if (flashcard) {
+    if (flashcard.question !== values.question) {
       dispatch({
         type: ValuesActionKind.SET_STATE,
         payload: {
@@ -103,7 +102,11 @@ export default function Page({ params: { slug } }: { params: Params }) {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flashcard]);
+
+  const [updating, setUpdating] = useState(false);
+  const [removing, setRemoving] = useState(false);
 
   const handleUpdate = async () => {
     if (
@@ -114,7 +117,7 @@ export default function Page({ params: { slug } }: { params: Params }) {
       return;
 
     setUpdating(true);
-    await update(slug, {
+    await update({
       question: values.question,
       answer: values.answer,
       categoryId: values.categoryId,
@@ -129,9 +132,9 @@ export default function Page({ params: { slug } }: { params: Params }) {
 
   const handleRemove = async () => {
     setRemoving(true);
-    await remove(slug);
+    await remove();
     setRemoving(false);
-    replace('/manage/flashcards');
+    router.replace('/manage/flashcards');
     toast({
       status: 'success',
       title: 'Flashcard deleted',
@@ -183,6 +186,12 @@ export default function Page({ params: { slug } }: { params: Params }) {
                   <Select
                     placeholder='Select category'
                     value={values?.categoryId}
+                    onChange={(e) => {
+                      dispatch({
+                        type: ValuesActionKind.SET_CATEGORY,
+                        payload: e.currentTarget.value,
+                      });
+                    }}
                   >
                     {categories?.map((category) => (
                       <option key={category.id} value={category.id}>
@@ -238,3 +247,49 @@ export default function Page({ params: { slug } }: { params: Params }) {
     </VStack>
   );
 }
+
+Page.getLayout = (page: ReactNode) => {
+  return (
+    <MainLayout>
+      <ManageLayout>{page}</ManageLayout>
+    </MainLayout>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+  const session = await getSession(ctx.req, ctx.res);
+  if (!session)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const user = await getUserFromSession(session);
+  if (!user)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  const slug = ctx.params?.slug as string;
+  const categories = await getCategories(user);
+
+  const flashcard = await getFlashcard(slug, user);
+  if (!flashcard) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      categories,
+      flashcard,
+      slug,
+    },
+  };
+};
