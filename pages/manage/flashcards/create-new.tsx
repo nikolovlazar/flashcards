@@ -21,7 +21,7 @@ import { type ReactNode, useReducer, useState, useEffect } from 'react';
 import { getCategories, getUserFromSession } from '../../../prisma/helpers';
 
 import { PageHeader } from '../../../src/components/page-header';
-import { useCategories, useFlashcards } from '../../../src/hooks';
+import { useFlashcards } from '../../../src/hooks';
 import MainLayout from '../../../src/layouts/main';
 import ManageLayout from '../../../src/layouts/manage';
 import { getSession } from '../../../utils/auth';

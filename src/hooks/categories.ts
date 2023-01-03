@@ -157,7 +157,7 @@ export function useCategory(slug?: string) {
   };
 
   const update = async (slug: string, name: string) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<Category>((resolve, reject) => {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'update-category',
