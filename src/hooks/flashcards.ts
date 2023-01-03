@@ -165,6 +165,7 @@ export function useFlashcard(slug?: string) {
 
     if (res.ok) {
       mutate(`/api/flashcards/${slug}`);
+      mutate('/api/flashcards');
       span.setStatus(`${res.status}-${res.statusText}`);
       span.setTag('http.status_code', res.status);
       span.finish();
