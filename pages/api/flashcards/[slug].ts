@@ -31,13 +31,13 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       });
       var flashcard = await getFlashcard(slug as string, user);
       if (!flashcard) {
-        span?.setStatus('Failed: Not found');
+        span?.setStatus('NotFound');
         span?.finish();
         transaction?.finish();
         return res.status(404).json({ message: 'Not found' });
       }
       if (flashcard.userId !== user.id) {
-        span?.setStatus('Failed: Unauthorized');
+        span?.setStatus('Unauthenticated');
         span?.finish();
         transaction?.finish();
         return res.status(401).json({ message: 'Unauthorized' });
@@ -55,14 +55,14 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       });
       var category = await getCategoryById(categoryId);
       if (!category) {
-        span?.setStatus('Failed: Category not found');
+        span?.setStatus('NotFound');
         span?.finish();
         transaction?.finish();
 
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('Failed: Unauthorized');
+        span?.setStatus('Unauthenticated');
         span?.finish();
         transaction?.finish();
 
@@ -71,14 +71,14 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
 
       var flashcard = await getFlashcard(slug as string, user);
       if (!flashcard) {
-        span?.setStatus('Failed: Not found');
+        span?.setStatus('NotFound');
         span?.finish();
         transaction?.finish();
 
         return res.status(404).json({ message: 'Not found' });
       }
       if (flashcard.userId !== user.id) {
-        span?.setStatus('Failed: Unauthorized');
+        span?.setStatus('Unauthenticated');
         span?.finish();
         transaction?.finish();
 
@@ -90,7 +90,7 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
         question.length === 0 ||
         answer.length === 0
       ) {
-        span?.setStatus('Failed: Invalid data');
+        span?.setStatus('InvalidArgument');
         span?.finish();
         transaction?.finish();
 
@@ -120,14 +120,14 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       var flashcard = await getFlashcard(slug as string, user);
 
       if (!flashcard) {
-        span?.setStatus('Failed: Not found');
+        span?.setStatus('NotFound');
         span?.finish();
         transaction?.finish();
 
         return res.status(404).json({ message: 'Not found' });
       }
       if (flashcard.userId !== user.id) {
-        span?.setStatus('Failed: Unauthorized');
+        span?.setStatus('Unauthenticated');
         span?.finish();
         transaction?.finish();
 

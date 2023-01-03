@@ -24,13 +24,13 @@ export function useCategories() {
         });
 
         if (res.ok) {
-          span?.setStatus(`${res.status}-${res.statusText}`);
+          span?.setStatus('Ok');
           span?.setTag('http.status_code', res.status);
           span?.finish();
           transaction?.finish();
           resolve(res.json());
         } else {
-          span?.setStatus('error');
+          span?.setStatus('UnknownError');
           span?.finish();
           transaction?.finish();
           reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
@@ -64,13 +64,13 @@ export function useCategories() {
 
         if (res.ok) {
           mutate('/api/categories');
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           transaction.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           transaction.finish();
           reject(`Failed to create category. Reason: ${res.statusText}`);
@@ -111,13 +111,13 @@ export function useCategory(slug?: string) {
         });
 
         if (res.ok) {
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           transaction.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           transaction.finish();
           reject(`Failed to fetch categories. Reason: ${res.statusText}`);
@@ -151,13 +151,13 @@ export function useCategory(slug?: string) {
 
         if (res.ok) {
           mutate('/api/categories');
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           transaction.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           transaction.finish();
           reject(`Failed to delete category. Reason: ${res.statusText}`);
@@ -195,12 +195,12 @@ export function useCategory(slug?: string) {
         if (res.ok) {
           mutate(`/api/categories/${slug}`);
           mutate('/api/categories');
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           reject(`Failed to delete category. Reason: ${res.statusText}`);
         }

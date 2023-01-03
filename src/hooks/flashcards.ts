@@ -27,13 +27,13 @@ export function useFlashcards() {
           });
 
           if (res.ok) {
-            span?.setStatus(`${res.status}-${res.statusText}`);
+            span?.setStatus('Ok');
             span?.setTag('http.status_code', res.status);
             span?.finish();
             transaction?.finish();
             resolve(res.json());
           } else {
-            span?.setStatus('error');
+            span?.setStatus('UnknownError');
             span?.finish();
             transaction?.finish();
             reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
@@ -68,13 +68,13 @@ export function useFlashcards() {
 
         if (res.ok) {
           mutate('/api/flashcards');
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           transaction.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           transaction.finish();
           reject(`Failed to create flashcard. Reason: ${res.statusText}`);
@@ -115,13 +115,13 @@ export function useFlashcard(slug?: string) {
           });
 
           if (res.ok) {
-            span.setStatus(`${res.status}-${res.statusText}`);
+            span.setStatus('Ok');
             span.setTag('http.status_code', res.status);
             span.finish();
             transaction.finish();
             resolve(await res.json());
           } else {
-            span.setStatus('error');
+            span.setStatus('UnknownError');
             span.finish();
             transaction.finish();
             reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
@@ -157,13 +157,13 @@ export function useFlashcard(slug?: string) {
 
         if (res.ok) {
           mutate('/api/flashcards');
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           transaction.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           transaction.finish();
           reject(`Failed to delete flashcard. Reason: ${res.statusText}`);
@@ -200,12 +200,12 @@ export function useFlashcard(slug?: string) {
         if (res.ok) {
           mutate(`/api/flashcards/${slug}`);
           mutate('/api/flashcards');
-          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
           span.finish();
           resolve(await res.json());
         } else {
-          span.setStatus('error');
+          span.setStatus('UnknownError');
           span.finish();
           reject(`Failed to delete flashcard. Reason: ${res.statusText}`);
         }

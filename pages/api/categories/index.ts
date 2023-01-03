@@ -38,7 +38,7 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       const { name } = req.body;
 
       if (!name) {
-        span?.setStatus('Failed: Name is required');
+        span?.setStatus('InvalidArgument');
         span?.finish();
         transaction?.finish();
 
