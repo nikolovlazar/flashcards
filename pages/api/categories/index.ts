@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import * as Sentry from '@sentry/nextjs';
 import sluggify from 'slugify';
 
 import {
@@ -15,26 +16,48 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const user = await getUserFromSession(session);
   if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
+  const transaction = Sentry.getCurrentHub().getScope()?.getTransaction();
+
   switch (req.method) {
     case 'GET':
-      res.status(200).json(await getCategories(user));
+      var span = transaction?.startChild({
+        op: 'db.query',
+        description: 'Get categories',
+      });
+      var categories = await getCategories(user);
+      span?.finish();
+      transaction?.finish();
+
+      res.status(200).json(categories);
       break;
     case 'POST':
+      var span = transaction?.startChild({
+        op: 'db.query',
+        description: 'Create category',
+      });
       const { name } = req.body;
 
-      if (!name) return res.status(400).json({ message: 'Name is required' });
+      if (!name) {
+        span?.setStatus('Failed: Name is required');
+        span?.finish();
+        transaction?.finish();
 
-      res.status(200).json(
-        await createCategory({
-          name,
-          slug: sluggify(name, { lower: true }),
-          user: {
-            connect: {
-              id: user.id,
-            },
+        return res.status(400).json({ message: 'Name is required' });
+      }
+
+      var created = await createCategory({
+        name,
+        slug: sluggify(name, { lower: true }),
+        user: {
+          connect: {
+            id: user.id,
           },
-        })
-      );
+        },
+      });
+      span?.finish();
+      transaction?.finish();
+
+      res.status(200).json(created);
       break;
     default:
       res.setHeader('Allow', ['GET', 'POST']);
