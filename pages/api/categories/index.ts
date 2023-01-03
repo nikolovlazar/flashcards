@@ -38,7 +38,7 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       const { name } = req.body;
 
       if (!name) {
-        span?.setStatus('InvalidArgument');
+        span?.setStatus('invalid_argument');
         span?.finish();
         transaction?.finish();
 

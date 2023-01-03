@@ -31,14 +31,14 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
 
       var category = await getCategory(slug as string, user);
       if (!category) {
-        span?.setStatus('NotFound');
+        span?.setStatus('not_found');
         span?.finish();
         transaction?.finish();
 
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('Unauthenticated');
+        span?.setStatus('unauthenticated');
         span?.finish();
         transaction?.finish();
 
@@ -58,14 +58,14 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
 
       var category = await getCategory(slug as string, user);
       if (!category) {
-        span?.setStatus('NotFound');
+        span?.setStatus('not_found');
         span?.finish();
         transaction?.finish();
 
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('Unauthenticated');
+        span?.setStatus('unauthenticated');
         span?.finish();
         transaction?.finish();
 
@@ -88,14 +88,14 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       });
       var category = await getCategory(slug as string, user);
       if (!category) {
-        span?.setStatus('NotFound');
+        span?.setStatus('not_found');
         span?.finish();
         transaction?.finish();
 
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('Unauthenticated');
+        span?.setStatus('unauthenticated');
         span?.finish();
         transaction?.finish();
 
