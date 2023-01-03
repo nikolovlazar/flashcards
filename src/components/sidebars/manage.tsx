@@ -10,10 +10,9 @@ import {
   Tabs,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { usePathname, useRouter } from 'next/navigation';
-import { Category } from '@prisma/client';
 
 import { FlashcardSidebarLink } from '../flashcard-sidebar-link';
 import { SidebarHeader } from './sidebar-header';

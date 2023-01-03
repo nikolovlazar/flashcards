@@ -38,34 +38,41 @@ export function useCategories() {
   });
 
   const create = async (name: string) => {
-    const transaction = Sentry.startTransaction({ name: 'create-category' });
-    const span = transaction.startChild({
-      op: 'http.client',
-      description: 'Creating flashcard',
-    });
-    const res = await fetch('/api/categories', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-      }),
-    });
+    return new Promise((resolve, reject) => {
+      Sentry.withScope(async (scope) => {
+        const transaction = Sentry.startTransaction({
+          name: 'create-category',
+        });
+        scope.setSpan(transaction);
+        const span = transaction.startChild({
+          op: 'http.client',
+          description: 'Creating flashcard',
+        });
+        const res = await fetch('/api/categories', {
+          method: 'POST',
+          headers: {
+            'sentry-trace': transaction.toTraceparent(),
+          },
+          body: JSON.stringify({
+            name,
+          }),
+        });
 
-    if (res.ok) {
-      mutate('/api/categories');
-      span.setStatus(`${res.status}-${res.statusText}`);
-      span.setTag('http.status_code', res.status);
-      span.finish();
-      transaction.finish();
-      return res.json();
-    } else {
-      span.setStatus('error');
-      span.finish();
-      transaction.finish();
-      throw new Error(`Failed to create category. Reason: ${res.statusText}`);
-    }
+        if (res.ok) {
+          mutate('/api/categories');
+          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setTag('http.status_code', res.status);
+          span.finish();
+          transaction.finish();
+          resolve(await res.json());
+        } else {
+          span.setStatus('error');
+          span.finish();
+          transaction.finish();
+          reject(`Failed to create category. Reason: ${res.statusText}`);
+        }
+      });
+    });
   };
 
   return {
@@ -78,96 +85,115 @@ export function useCategory(slug?: string) {
   const { data: category, isLoading } = useSWR<
     Category & { flashcards?: Flashcard[] }
   >(slug && `/api/categories/${slug}`, async () => {
-    const transaction = Sentry.startTransaction({ name: 'fetch-category' });
-    const span = transaction.startChild({
-      op: 'http.client',
-      description: 'Fetching category by slug',
-      tags: {
-        slug,
-      },
-    });
-    const res = await fetch(`/api/categories/${slug}`, {
-      headers: {
-        'sentry-trace': transaction.toTraceparent(),
-      },
-    });
+    return new Promise((resolve, reject) => {
+      Sentry.withScope(async (scope) => {
+        const transaction = Sentry.startTransaction({ name: 'fetch-category' });
+        scope.setSpan(transaction);
+        const span = transaction.startChild({
+          op: 'http.client',
+          description: 'Fetching category by slug',
+          tags: {
+            slug,
+          },
+        });
+        const res = await fetch(`/api/categories/${slug}`, {
+          headers: {
+            'sentry-trace': transaction.toTraceparent(),
+          },
+        });
 
-    if (res.ok) {
-      span.setStatus(`${res.status}-${res.statusText}`);
-      span.setTag('http.status_code', res.status);
-      span.finish();
-      transaction.finish();
-      return res.json();
-    } else {
-      span.setStatus('error');
-      span.finish();
-      transaction.finish();
-      throw new Error(`Failed to fetch categories. Reason: ${res.statusText}`);
-    }
+        if (res.ok) {
+          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setTag('http.status_code', res.status);
+          span.finish();
+          transaction.finish();
+          resolve(await res.json());
+        } else {
+          span.setStatus('error');
+          span.finish();
+          transaction.finish();
+          reject(`Failed to fetch categories. Reason: ${res.statusText}`);
+        }
+      });
+    });
   });
 
   const remove = async () => {
-    const transaction = Sentry.startTransaction({ name: 'remove-category' });
-    const span = transaction.startChild({
-      op: 'http.client',
-      description: 'Deleting category',
-      tags: {
-        slug,
-      },
-    });
-    const res = await fetch(`/api/categories/${slug}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return new Promise((resolve, reject) => {
+      Sentry.withScope(async (scope) => {
+        const transaction = Sentry.startTransaction({
+          name: 'remove-category',
+        });
+        scope.setSpan(transaction);
+        const span = transaction.startChild({
+          op: 'http.client',
+          description: 'Deleting category',
+          tags: {
+            slug,
+          },
+        });
+        const res = await fetch(`/api/categories/${slug}`, {
+          method: 'DELETE',
+          headers: {
+            'sentry-trace': transaction.toTraceparent(),
+          },
+        });
 
-    if (res.ok) {
-      mutate('/api/categories');
-      span.setStatus(`${res.status}-${res.statusText}`);
-      span.setTag('http.status_code', res.status);
-      span.finish();
-      transaction.finish();
-      return res.json();
-    } else {
-      span.setStatus('error');
-      span.finish();
-      transaction.finish();
-      throw new Error(`Failed to delete category. Reason: ${res.statusText}`);
-    }
+        if (res.ok) {
+          mutate('/api/categories');
+          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setTag('http.status_code', res.status);
+          span.finish();
+          transaction.finish();
+          resolve(await res.json());
+        } else {
+          span.setStatus('error');
+          span.finish();
+          transaction.finish();
+          reject(`Failed to delete category. Reason: ${res.statusText}`);
+        }
+      });
+    });
   };
 
   const update = async (slug: string, name: string) => {
-    const transaction = Sentry.startTransaction({ name: 'update-category' });
-    const span = transaction.startChild({
-      op: 'http.client',
-      description: 'Updating category',
-      tags: {
-        slug,
-      },
-    });
-    const res = await fetch(`/api/categories/${slug}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-      }),
-    });
+    return new Promise((resolve, reject) => {
+      Sentry.withScope(async (scope) => {
+        const transaction = Sentry.startTransaction({
+          name: 'update-category',
+        });
+        scope.setSpan(transaction);
+        const span = transaction.startChild({
+          op: 'http.client',
+          description: 'Updating category',
+          tags: {
+            slug,
+          },
+        });
+        const res = await fetch(`/api/categories/${slug}`, {
+          method: 'PUT',
+          headers: {
+            'sentry-trace': transaction.toTraceparent(),
+          },
+          body: JSON.stringify({
+            name,
+          }),
+        });
 
-    if (res.ok) {
-      mutate(`/api/categories/${slug}`);
-      mutate('/api/categories');
-      span.setStatus(`${res.status}-${res.statusText}`);
-      span.setTag('http.status_code', res.status);
-      span.finish();
-      return res.json();
-    } else {
-      span.setStatus('error');
-      span.finish();
-      throw new Error(`Failed to delete category. Reason: ${res.statusText}`);
-    }
+        if (res.ok) {
+          mutate(`/api/categories/${slug}`);
+          mutate('/api/categories');
+          span.setStatus(`${res.status}-${res.statusText}`);
+          span.setTag('http.status_code', res.status);
+          span.finish();
+          resolve(await res.json());
+        } else {
+          span.setStatus('error');
+          span.finish();
+          reject(`Failed to delete category. Reason: ${res.statusText}`);
+        }
+      });
+    });
   };
 
   return {
