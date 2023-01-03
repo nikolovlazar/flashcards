@@ -27,17 +27,15 @@ export function useFlashcards() {
           });
 
           if (res.ok) {
-            span?.setStatus('Ok');
-            span?.setTag('http.status_code', res.status);
-            span?.finish();
-            transaction?.finish();
+            span.setStatus('Ok');
+            span.setTag('http.status_code', res.status);
             resolve(res.json());
           } else {
-            span?.setStatus('UnknownError');
-            span?.finish();
-            transaction?.finish();
+            span.setStatus('UnknownError');
             reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
           }
+          span.finish();
+          transaction?.finish();
         });
       });
     }
@@ -70,15 +68,13 @@ export function useFlashcards() {
           mutate('/api/flashcards');
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
-          transaction.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
-          transaction.finish();
           reject(`Failed to create flashcard. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   };
@@ -117,15 +113,13 @@ export function useFlashcard(slug?: string) {
           if (res.ok) {
             span.setStatus('Ok');
             span.setTag('http.status_code', res.status);
-            span.finish();
-            transaction.finish();
             resolve(await res.json());
           } else {
             span.setStatus('UnknownError');
-            span.finish();
-            transaction.finish();
             reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
           }
+          span.finish();
+          transaction.finish();
         });
       });
     }
@@ -159,15 +153,13 @@ export function useFlashcard(slug?: string) {
           mutate('/api/flashcards');
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
-          transaction.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
-          transaction.finish();
           reject(`Failed to delete flashcard. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   };
@@ -202,13 +194,13 @@ export function useFlashcard(slug?: string) {
           mutate('/api/flashcards');
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
           reject(`Failed to delete flashcard. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   };

@@ -24,17 +24,15 @@ export function useCategories() {
         });
 
         if (res.ok) {
-          span?.setStatus('Ok');
-          span?.setTag('http.status_code', res.status);
-          span?.finish();
-          transaction?.finish();
+          span.setStatus('Ok');
+          span.setTag('http.status_code', res.status);
           resolve(res.json());
         } else {
-          span?.setStatus('UnknownError');
-          span?.finish();
-          transaction?.finish();
+          span.setStatus('UnknownError');
           reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction?.finish();
       });
     });
   });
@@ -66,15 +64,13 @@ export function useCategories() {
           mutate('/api/categories');
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
-          transaction.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
-          transaction.finish();
           reject(`Failed to create category. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   };
@@ -113,15 +109,13 @@ export function useCategory(slug?: string) {
         if (res.ok) {
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
-          transaction.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
-          transaction.finish();
           reject(`Failed to fetch categories. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   });
@@ -153,15 +147,13 @@ export function useCategory(slug?: string) {
           mutate('/api/categories');
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
-          transaction.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
-          transaction.finish();
           reject(`Failed to delete category. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   };
@@ -197,13 +189,13 @@ export function useCategory(slug?: string) {
           mutate('/api/categories');
           span.setStatus('Ok');
           span.setTag('http.status_code', res.status);
-          span.finish();
           resolve(await res.json());
         } else {
           span.setStatus('UnknownError');
-          span.finish();
           reject(`Failed to delete category. Reason: ${res.statusText}`);
         }
+        span.finish();
+        transaction.finish();
       });
     });
   };
