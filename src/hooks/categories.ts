@@ -17,6 +17,7 @@ export function useCategories() {
 
         const res = await fetch('/api/categories', {
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction?.toTraceparent(),
           },
         });
@@ -51,6 +52,7 @@ export function useCategories() {
         const res = await fetch('/api/categories', {
           method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction.toTraceparent(),
           },
           body: JSON.stringify({
@@ -98,6 +100,7 @@ export function useCategory(slug?: string) {
         });
         const res = await fetch(`/api/categories/${slug}`, {
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction.toTraceparent(),
           },
         });
@@ -135,6 +138,7 @@ export function useCategory(slug?: string) {
         const res = await fetch(`/api/categories/${slug}`, {
           method: 'DELETE',
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction.toTraceparent(),
           },
         });
@@ -173,6 +177,7 @@ export function useCategory(slug?: string) {
         const res = await fetch(`/api/categories/${slug}`, {
           method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction.toTraceparent(),
           },
           body: JSON.stringify({

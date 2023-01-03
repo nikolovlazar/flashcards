@@ -20,6 +20,7 @@ export function useFlashcards() {
 
           const res = await fetch('/api/flashcards', {
             headers: {
+              'Content-Type': 'application/json',
               'sentry-trace': transaction?.toTraceparent(),
             },
           });
@@ -105,6 +106,7 @@ export function useFlashcard(slug?: string) {
           });
           const res = await fetch(`/api/flashcards/${slug}`, {
             headers: {
+              'Content-Type': 'application/json',
               'sentry-trace': transaction.toTraceparent(),
             },
           });
@@ -144,6 +146,7 @@ export function useFlashcard(slug?: string) {
         const res = await fetch(`/api/flashcards/${slug}`, {
           method: 'DELETE',
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction.toTraceparent(),
           },
         });
@@ -183,6 +186,7 @@ export function useFlashcard(slug?: string) {
         const res = await fetch(`/api/flashcards/${slug}`, {
           method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             'sentry-trace': transaction.toTraceparent(),
           },
           body: JSON.stringify(data),
