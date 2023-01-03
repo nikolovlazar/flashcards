@@ -11,6 +11,7 @@ export function useFlashcards() {
         Sentry.withScope(async (scope) => {
           const transaction = Sentry.startTransaction({
             name: 'fetch-flashcards',
+            op: 'http.client',
           });
           scope.setSpan(transaction);
           const span = transaction?.startChild({
@@ -49,6 +50,7 @@ export function useFlashcards() {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'create-flashcard',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction.startChild({
@@ -95,6 +97,7 @@ export function useFlashcard(slug?: string) {
         Sentry.withScope(async (scope) => {
           const transaction = Sentry.startTransaction({
             name: 'fetch-flashcard',
+            op: 'http.client',
           });
           scope.setSpan(transaction);
           const span = transaction.startChild({
@@ -133,6 +136,7 @@ export function useFlashcard(slug?: string) {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'remove-flashcard',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction.startChild({
@@ -173,6 +177,7 @@ export function useFlashcard(slug?: string) {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'update-flashcard',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction.startChild({

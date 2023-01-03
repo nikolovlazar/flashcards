@@ -8,6 +8,7 @@ export function useCategories() {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'fetch-categories',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction?.startChild({
@@ -43,6 +44,7 @@ export function useCategories() {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'create-category',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction.startChild({
@@ -89,7 +91,10 @@ export function useCategory(slug?: string) {
   >(slug && `/api/categories/${slug}`, async () => {
     return new Promise((resolve, reject) => {
       Sentry.withScope(async (scope) => {
-        const transaction = Sentry.startTransaction({ name: 'fetch-category' });
+        const transaction = Sentry.startTransaction({
+          name: 'fetch-category',
+          op: 'http.client',
+        });
         scope.setSpan(transaction);
         const span = transaction.startChild({
           op: 'http.client',
@@ -126,6 +131,7 @@ export function useCategory(slug?: string) {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'remove-category',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction.startChild({
@@ -165,6 +171,7 @@ export function useCategory(slug?: string) {
       Sentry.withScope(async (scope) => {
         const transaction = Sentry.startTransaction({
           name: 'update-category',
+          op: 'http.client',
         });
         scope.setSpan(transaction);
         const span = transaction.startChild({
