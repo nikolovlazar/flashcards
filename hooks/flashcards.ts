@@ -1,17 +1,80 @@
-import useSWR from 'swr';
-import type { Flashcard } from '@prisma/client';
+'use client';
 
-import { getter } from './fetchers';
+import type { Flashcard } from '@prisma/client';
+import * as Sentry from '@sentry/nextjs';
 
 export function useFlashcards() {
-  const { data, error, isLoading, isValidating, mutate } = useSWR<Flashcard[]>(
-    '/api/flashcards',
-    getter
-  );
+  const fetchAll = async (): Promise<Flashcard[]> => {
+    return new Promise((resolve, reject) => {
+      Sentry.withScope(async (scope) => {
+        const transaction = Sentry.startTransaction({
+          name: 'fetch-flashcards',
+        });
+        scope.setSpan(transaction);
+        const span = transaction?.startChild({
+          op: 'http.client',
+          description: 'Fetching flashcards',
+        });
+
+        const res = await fetch('/api/flashcards', {
+          headers: {
+            'sentry-trace': transaction?.toTraceparent(),
+          },
+        });
+
+        if (res.ok) {
+          span?.setStatus(`${res.status}-${res.statusText}`);
+          span?.setTag('http.status_code', res.status);
+          span?.finish();
+          transaction?.finish();
+          resolve(res.json());
+        } else {
+          span?.setStatus('error');
+          span?.finish();
+          transaction?.finish();
+          reject(`Failed to fetch flashcards. Reason: ${res.statusText}`);
+        }
+      });
+    });
+  };
+
+  const fetchBySlug = async (slug: string) => {
+    // eve komentarce
+    const x = 15 + 14;
+    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+    const span = transaction.startChild({
+      op: 'http.client',
+      description: 'Fetching flashcard by slug',
+      tags: {
+        slug,
+      },
+    });
+    const res = await fetch(`/api/flashcards/${slug}`, {
+      headers: {
+        'sentry-trace': transaction.toTraceparent(),
+      },
+    });
+
+    if (res.ok) {
+      span.setStatus(`${res.status}-${res.statusText}`);
+      span.setTag('http.status_code', res.status);
+      span.finish();
+      return res.json();
+    } else {
+      span.setStatus('error');
+      span.finish();
+      throw new Error(`Failed to fetch flashcards. Reason: ${res.statusText}`);
+    }
+  };
 
   const create = async (
     data: Pick<Flashcard, 'question' | 'answer' | 'categoryId'>
   ) => {
+    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+    const span = transaction.startChild({
+      op: 'http.client',
+      description: 'Creating flashcard',
+    });
     const res = await fetch('/api/flashcards', {
       method: 'POST',
       headers: {
@@ -21,11 +84,27 @@ export function useFlashcards() {
     });
 
     if (res.ok) {
-      mutate();
+      span.setStatus(`${res.status}-${res.statusText}`);
+      span.setTag('http.status_code', res.status);
+      span.finish();
+      return res.json();
+    } else {
+      span.setStatus('error');
+      span.finish();
+      throw new Error(`Failed to create flashcard. Reason: ${res.statusText}`);
     }
   };
 
   const remove = async (slug: string) => {
+    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+    const span = transaction.startChild({
+      op: 'http.client',
+      description: 'Deleting flashcard',
+      tags: {
+        slug,
+      },
+    });
+
     const res = await fetch(`/api/flashcards/${slug}`, {
       method: 'DELETE',
       headers: {
@@ -34,11 +113,27 @@ export function useFlashcards() {
     });
 
     if (res.ok) {
-      mutate();
+      span.setStatus(`${res.status}-${res.statusText}`);
+      span.setTag('http.status_code', res.status);
+      span.finish();
+      return res.json();
+    } else {
+      span.setStatus('error');
+      span.finish();
+      throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
     }
   };
 
   const update = async (slug: string, data: Partial<Flashcard>) => {
+    const transaction = Sentry.startTransaction({ name: 'fetch-flashcards' });
+    const span = transaction.startChild({
+      op: 'http.client',
+      description: 'Updating flashcard',
+      tags: {
+        slug,
+      },
+    });
+
     const res = await fetch(`/api/flashcards/${slug}`, {
       method: 'PUT',
       headers: {
@@ -48,26 +143,22 @@ export function useFlashcards() {
     });
 
     if (res.ok) {
-      mutate();
-
-      return await res.json();
+      span.setStatus(`${res.status}-${res.statusText}`);
+      span.setTag('http.status_code', res.status);
+      span.finish();
+      return res.json();
+    } else {
+      span.setStatus('error');
+      span.finish();
+      throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
     }
-
-    return null;
   };
 
   return {
-    data,
-    error,
-    isLoading,
-    isValidating,
-    mutate,
+    fetchAll,
+    fetchBySlug,
     create,
     remove,
     update,
   };
-}
-
-export function useFlashcard(slug: string) {
-  return useSWR<Flashcard>(`/api/flashcards/${slug}`, getter);
 }

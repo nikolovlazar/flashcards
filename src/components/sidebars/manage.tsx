@@ -12,9 +12,10 @@ import {
   Tabs,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { usePathname, useRouter } from 'next/navigation';
+import { Flashcard } from '@prisma/client';
 
 import { FlashcardSidebarLink } from '../flashcard-sidebar-link';
 import { SidebarHeader } from './sidebar-header';
@@ -31,7 +32,14 @@ export const ManageSidebar = () => {
   const [tabIndex, setTabIndex] = useState(Math.max(0, categoriesActiveIndex));
 
   const { data: categories } = useCategories();
-  const { data: flashcards } = useFlashcards();
+  const { fetchAll: fetchFlashcards } = useFlashcards();
+  const [flashcards, setFlashcards] = useState<Flashcard[]>();
+
+  useEffect(() => {
+    if (!flashcards) {
+      fetchFlashcards().then((data) => setFlashcards(data));
+    }
+  }, [flashcards, fetchFlashcards]);
 
   return (
     <VStack

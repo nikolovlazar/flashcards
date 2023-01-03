@@ -24,10 +24,11 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
+import { Flashcard } from '@prisma/client';
 import { useEffect, useReducer, useState } from 'react';
 
 import { PageHeader } from '../../../../src/components/page-header';
-import { useCategories, useFlashcard, useFlashcards } from '../../../../hooks';
+import { useCategories, useFlashcards } from '../../../../hooks';
 import { useRouter } from 'next/navigation';
 
 type Params = {
@@ -71,10 +72,10 @@ function valuesReducer(state: ValuesState, action: ValuesAction) {
 export default function Page({ params: { slug } }: { params: Params }) {
   const { replace } = useRouter();
   const { data: categories } = useCategories();
-  const { data: flashcard } = useFlashcard(slug);
-  const { update, remove } = useFlashcards();
+  const { fetchBySlug, update, remove } = useFlashcards();
   const toast = useToast();
 
+  const [flashcard, setFlashcard] = useState<Flashcard>();
   const [values, dispatch] = useReducer(valuesReducer, {
     id: flashcard?.id,
     question: flashcard?.question,
@@ -83,6 +84,12 @@ export default function Page({ params: { slug } }: { params: Params }) {
   });
   const [updating, setUpdating] = useState(false);
   const [removing, setRemoving] = useState(false);
+
+  useEffect(() => {
+    if (!flashcard) {
+      fetchBySlug(slug).then((flashcard) => setFlashcard(flashcard));
+    }
+  }, [flashcard, setFlashcard, fetchBySlug, slug]);
 
   useEffect(() => {
     if (flashcard) {
