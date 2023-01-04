@@ -20,55 +20,24 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const user = await getUserFromSession(session);
   if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
-  const transaction = Sentry.getCurrentHub().getScope()?.getTransaction();
-
   switch (req.method) {
     case 'GET':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Get category',
-      });
-
       var category = await getCategory(slug as string, user);
       if (!category) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(401).json({ message: 'Unauthorized' });
       }
-
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(category);
       break;
     case 'PUT':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Update category',
-      });
-
       var category = await getCategory(slug as string, user);
       if (!category) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
@@ -76,35 +45,19 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
         name,
         slug: sluggify(name, { lower: true }),
       });
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(updated);
       break;
     case 'DELETE':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Create category',
-      });
       var category = await getCategory(slug as string, user);
       if (!category) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
       const deleted = await deleteCategory(slug as string, user);
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(deleted);
       break;

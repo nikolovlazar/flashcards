@@ -21,68 +21,53 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const user = await getUserFromSession(session);
   if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
-  const transaction = Sentry.getCurrentHub().getScope()?.getTransaction();
-
   switch (req.method) {
     case 'GET':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Get flashcard',
-      });
       var flashcard = await getFlashcard(slug as string, user);
       if (!flashcard) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
         return res.status(404).json({ message: 'Not found' });
       }
       if (flashcard.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
         return res.status(401).json({ message: 'Unauthorized' });
       }
-
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(flashcard);
       break;
     case 'PUT':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Update flashcard',
-      });
-      var category = await getCategoryById(categoryId);
-      if (!category) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
+      const scope = Sentry.getCurrentHub().getScope();
+      const transaction = scope?.getTransaction();
 
+      var category = await getCategoryById(categoryId);
+
+      const categoryChecksSpan = transaction?.startChild({
+        op: 'function',
+        description: 'Category checks',
+      });
+
+      if (!category) {
+        categoryChecksSpan?.setStatus('not_found');
+        categoryChecksSpan?.finish();
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
-
+        categoryChecksSpan?.setStatus('unauthenticated');
+        categoryChecksSpan?.finish();
         return res.status(401).json({ message: 'Unauthorized' });
       }
+
+      categoryChecksSpan?.finish();
 
       var flashcard = await getFlashcard(slug as string, user);
+
+      const flashcardChecksSpan = transaction?.startChild({
+        op: 'function',
+        description: 'Flashcard checks',
+      });
+
       if (!flashcard) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
-
+        flashcardChecksSpan?.setStatus('not_found');
+        flashcardChecksSpan?.finish();
         return res.status(404).json({ message: 'Not found' });
-      }
-      if (flashcard.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
-
-        return res.status(401).json({ message: 'Unauthorized' });
       }
       if (
         !question ||
@@ -90,12 +75,12 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
         question.length === 0 ||
         answer.length === 0
       ) {
-        span?.setStatus('invalid_argument');
-        span?.finish();
-        transaction?.finish();
-
+        flashcardChecksSpan?.setStatus('unauthenticated');
+        flashcardChecksSpan?.finish();
         return res.status(400).json({ message: 'Invalid data' });
       }
+
+      flashcardChecksSpan?.finish();
 
       var updated = await updateFlashcard(flashcard.id, {
         question,
@@ -107,36 +92,20 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(updated);
       break;
     case 'DELETE':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Delete flashcard',
-      });
       var flashcard = await getFlashcard(slug as string, user);
 
       if (!flashcard) {
-        span?.setStatus('not_found');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(404).json({ message: 'Not found' });
       }
       if (flashcard.userId !== user.id) {
-        span?.setStatus('unauthenticated');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
       const deleted = await deleteFlashcard(slug as string, user);
-      span?.finish();
-      transaction?.finish();
       res.status(200).json(deleted);
       break;
     default:
