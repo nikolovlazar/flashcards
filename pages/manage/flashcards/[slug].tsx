@@ -23,19 +23,19 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import type { Category, Flashcard } from '@prisma/client';
-import { type ReactNode, useReducer, useState, useEffect } from 'react';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/navigation';
+import { useEffect, useReducer, useState, type ReactNode } from 'react';
 
+import {
+  getCategories,
+  getFlashcard,
+  getUserFromSession,
+} from '../../../prisma/helpers';
 import { PageHeader } from '../../../src/components/page-header';
 import { useFlashcard } from '../../../src/hooks';
 import MainLayout from '../../../src/layouts/main';
 import ManageLayout from '../../../src/layouts/manage';
-import { GetServerSideProps } from 'next';
-import {
-  getUserFromSession,
-  getCategories,
-  getFlashcard,
-} from '../../../prisma/helpers';
 import { getSession } from '../../../utils/auth';
 
 enum ValuesActionKind {
