@@ -88,7 +88,7 @@ function UserElement() {
         <HStack spacing={2}>
           <Avatar
             src={data?.user?.image ?? ''}
-            name={data?.user?.name ?? 'Some User'}
+            name={data?.user?.name ?? data?.user?.email ?? 'Some User'}
             size='sm'
           />
           <VStack alignItems='flex-start' spacing={0} flex={1}>

@@ -1,4 +1,4 @@
-import { unstable_getServerSession } from 'next-auth/next';
+import { getServerSession } from 'next-auth';
 import type {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -11,5 +11,6 @@ type Req = GetServerSidePropsContext['req'] | NextApiRequest;
 type Res = GetServerSidePropsContext['res'] | NextApiResponse;
 
 export const getSession = async (req: Req, res: Res) => {
-  return await unstable_getServerSession(req, res, authOptions);
+  // @ts-ignore
+  return await getServerSession(req, res, authOptions);
 };
