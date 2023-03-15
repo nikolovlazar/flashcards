@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import * as Sentry from '@sentry/nextjs';
 import sluggify from 'slugify';
 
 import {
@@ -16,32 +15,16 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
   const user = await getUserFromSession(session);
   if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
-  const transaction = Sentry.getCurrentHub().getScope()?.getTransaction();
-
   switch (req.method) {
     case 'GET':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Get categories',
-      });
       var categories = await getCategories(user);
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(categories);
       break;
     case 'POST':
-      var span = transaction?.startChild({
-        op: 'db.query',
-        description: 'Create category',
-      });
       const { name } = req.body;
 
       if (!name) {
-        span?.setStatus('invalid_argument');
-        span?.finish();
-        transaction?.finish();
-
         return res.status(400).json({ message: 'Name is required' });
       }
 
@@ -54,8 +37,6 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       });
-      span?.finish();
-      transaction?.finish();
 
       res.status(200).json(created);
       break;

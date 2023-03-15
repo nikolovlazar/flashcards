@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import sluggify from 'slugify';
-import * as Sentry from '@sentry/nextjs';
 
 import {
   createFlashcard,
