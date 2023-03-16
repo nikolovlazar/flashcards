@@ -21,16 +21,19 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials, req) => {
-        const user = await fetch(`${NEXTAUTH_URL}/api/user/check-credentials`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Accept: 'application/json',
-          },
-          body: Object.entries(credentials)
-            .map((e) => e.join('='))
-            .join('&'),
-        })
+        const user = await fetch(
+          `${req.headers.origin}/api/user/check-credentials`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Accept: 'application/json',
+            },
+            body: Object.entries(credentials)
+              .map((e) => e.join('='))
+              .join('&'),
+          }
+        )
           .then((res) => res.json())
           .catch((err) => {
             return null;
