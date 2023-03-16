@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "React",
+    "slug": "react",
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 2,
+    "name": "JavaScript",
+    "slug": "javascript",
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 3,
+    "name": "TypeScript",
+    "slug": "typescript",
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  }
+]

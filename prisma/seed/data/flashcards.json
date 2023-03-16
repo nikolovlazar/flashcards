@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "question": "What is React?",
+    "answer": "A JavaScript library for building user interfaces.",
+    "slug": "what-is-react",
+    "categoryId": 1,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 2,
+    "question": "What is a component?",
+    "answer": "A component is a function that returns a React element.",
+    "slug": "what-is-a-component",
+    "categoryId": 1,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 3,
+    "question": "What is a hook?",
+    "answer": "A hook is a function that lets you “hook into” React features.",
+    "slug": "what-is-a-hook",
+    "categoryId": 1,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 4,
+    "question": "What is a closure?",
+    "answer": "A closure is a function that remembers its outer variables and can access them.",
+    "slug": "what-is-a-closure",
+    "categoryId": 2,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 5,
+    "question": "What is a promise?",
+    "answer": "A promise is an object that may produce a single value some time in the future.",
+    "slug": "what-is-a-promise",
+    "categoryId": 2,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 6,
+    "question": "What is a discriminated union?",
+    "answer": "A discriminated union is a union type that has a common property that identifies which type it is.",
+    "slug": "what-is-a-discriminated-union",
+    "categoryId": 3,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  },
+  {
+    "id": 7,
+    "question": "What is a type guard?",
+    "answer": "A type guard is a function that checks whether a value is of a specific type.",
+    "slug": "what-is-a-type-guard",
+    "categoryId": 3,
+    "userId": "clfbgfv5a000015wt3ook10cy"
+  }
+]
