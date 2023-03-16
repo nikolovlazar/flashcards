@@ -1,34 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Flashcards 🧠
 
-## Getting Started
+Flashcards is a simple CRUD app that allows users to create their own flashcards and categories, and lets them practice by showing them the cards (can be by order or random). The goal of this app is to demonstrate Distributed Tracing in [Next.js](https://nextjs.org) using [Sentry](https://sentry.io/welcome).
 
-First, run the development server:
+## Running it locally
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+> ℹ️ Since this is a template repo, use it to create your own repo and clone that locally.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To get it up and running, first you'd need to rename the `.example.env` file to `.env` file. Then, you'd need to create and setup accounts on the following platforms:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- Sentry ([register here](https://sentry.io/welcome))
+  - Sentry is an open source application monitoring platform. We're using Sentry in this project to implement distributed tracing.
+  - Create an account and a project in order to obtain the DSN. Grab the DSN and replace the `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN` values in your `.env` file.
+- PlanetScale ([register here](https://planetscale.com))
+  - PlanetScale is a serverless MySQL database.
+  - Create an account and a database in order to obtain a connection string. Grab the connection string and replace the `DATABASE_URL` value in your `.env` file.
+- Generate a random string for the `NEXTAUTH_SECRET` value.
+  - It can include numbers and special characters as well.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Once you have the environment variables all set, you can proceed to install the dependencies by running `pnpm install`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Then you'd need to setup your database, so follow these instructions:
 
-## Learn More
+1. Run `npx prisma generate` to generate the Prisma client based on the schema.
+2. Run `npx prisma db push` to initialize your database branch.
+3. Run `npx prisma db seed` to add demo data so you don't have to manually create the categories and flashcards.
 
-To learn more about Next.js, take a look at the following resources:
+When you're done with that, you can start the app locally by running `pnpm dev` and visiting [localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+You'll be met with a sign in screen. If you did the seed data, you can sign in with `admin@admin.com` as the email and `admin` as the password. Otherwise, you can create an account just by typing in your email and a passport. The "sign in" is actually "sign in / register".
