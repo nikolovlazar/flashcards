@@ -6,18 +6,9 @@ Flashcards is a simple CRUD app that allows users to create their own flashcards
 
 > ℹ️ Since this is a template repo, use it to create your own repo and clone that locally.
 
-To get it up and running, first you'd need to rename the `.example.env` file to `.env` file. Then, you'd need to create and setup accounts on the following platforms:
+To get it up and running, first you'd need to rename the `.example.env` file to `.env` file. Then, you'd need to replace your `DATABASE_URL` value. You can use any MySQL service (like [Cloud SQL](https://cloud.google.com/sql) or [PlanetScale](https://planetscale.com/)), or spin up a local MySQL instance. For the `NEXTAUTH_SECRET` value you can use a random string generator. The value can also contain numbers and special characters. The Sentry values aren't required to run the app, so you can skip them for now.
 
-- Sentry ([register here](https://sentry.io/welcome))
-  - Sentry is an open source application monitoring platform. We're using Sentry in this project to implement distributed tracing.
-  - Create an account and a project in order to obtain the DSN. Grab the DSN and replace the `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN` values in your `.env` file.
-- PlanetScale ([register here](https://planetscale.com))
-  - PlanetScale is a serverless MySQL database.
-  - Create an account and a database in order to obtain a connection string. Grab the connection string and replace the `DATABASE_URL` value in your `.env` file.
-- Generate a random string for the `NEXTAUTH_SECRET` value.
-  - It can include numbers and special characters as well.
-
-Once you have the environment variables all set, you can proceed to install the dependencies by running `pnpm install`.
+Once you have the environment variables set, you can proceed to install the dependencies by running `pnpm install`.
 
 Then you'd need to setup your database, so follow these instructions:
 
@@ -27,4 +18,4 @@ Then you'd need to setup your database, so follow these instructions:
 
 When you're done with that, you can start the app locally by running `pnpm dev` and visiting [localhost:3000](http://localhost:3000).
 
-You'll be met with a sign in screen. If you did the seed data, you can sign in with `admin@admin.com` as the email and `admin` as the password. Otherwise, you can create an account just by typing in your email and a passport. The "sign in" is actually "sign in / register".
+You'll be met with a sign in screen. If you did the seed data, you can sign in with `admin@admin.com` as the email and `admin` as the password. Otherwise, you can create an account just by typing in your email and a passport. The "sign in" is actually "sign in or register".
