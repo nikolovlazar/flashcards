@@ -15,6 +15,7 @@
     "@next-auth/prisma-adapter": "^1.0.5",
     "@next/font": "13.2.4",
     "@prisma/client": "^4.11.0",
+    "@sentry/nextjs": "^7.46.0",
     "color": "^4.2.3",
     "crypto-js": "^4.1.1",
     "framer-motion": "^10.2.5",
