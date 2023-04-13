@@ -4,9 +4,7 @@ Flashcards is a simple CRUD app that allows users to create their own flashcards
 
 ## Running it locally
 
-> ℹ️ Since this is a template repo, use it to create your own repo and clone that locally.
-
-To get it up and running, first you'd need to rename the `.example.env` file to `.env` file. Then, you'd need to replace your `DATABASE_URL` value. You can use any MySQL service (like [Cloud SQL](https://cloud.google.com/sql) or [PlanetScale](https://planetscale.com/)), or spin up a local MySQL instance. For the `NEXTAUTH_SECRET` value you can use a random string generator. The value can also contain numbers and special characters. The Sentry values aren't required to run the app, so you can skip them for now.
+To get it up and running, first you'd need to rename the `.example.env` file to `.env` file. Then, you'd need to replace your `DATABASE_URL` value. You can use any MySQL service (like [Cloud SQL](https://cloud.google.com/sql) or [PlanetScale](https://planetscale.com/)), or spin up a local MySQL instance. For the `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN` paste your project's DSN string. For the `NEXTAUTH_SECRET` value you can use a random string generator. The value can also contain numbers and special characters. The Sentry values aren't required to run the app, so you can skip them for now.
 
 Once you have the environment variables set, you can proceed to install the dependencies by running `pnpm install`.
 

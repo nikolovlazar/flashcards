@@ -12,12 +12,12 @@ const nextConfig = {
       {
         source: '/',
         destination: '/manage/flashcards',
-        permanent: true,
+        permanent: false,
       },
       {
         source: '/manage',
         destination: '/manage/flashcards',
-        permanent: true,
+        permanent: false,
       },
     ];
   },
