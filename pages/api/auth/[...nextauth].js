@@ -20,14 +20,13 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials, req) => {
-        const user = await checkCredentials(
-          credentials.email,
-          credentials.password
-        );
-
-        if (user) {
+        try {
+          const user = await checkCredentials(
+            credentials.email,
+            credentials.password
+          );
           return user;
-        } else {
+        } catch (e) {
           return null;
         }
       },

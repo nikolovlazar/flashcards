@@ -1,5 +1,5 @@
 import useSWR, { mutate } from 'swr';
-
+import * as Sentry from '@sentry/nextjs';
 import type { Flashcard } from '@prisma/client';
 
 export function useFlashcards() {
@@ -84,9 +84,26 @@ export function useFlashcard(slug?: string) {
   };
 
   const update = async (data: Partial<Flashcard>) => {
+    const scope = Sentry.getCurrentHub().getScope();
+    const transaction = Sentry.startTransaction({
+      name: 'Updating flashcard',
+    });
+    scope?.setSpan(transaction);
+
+    transaction
+      .startChild({
+        op: 'mark',
+        description: '=== Making the API request ===',
+      })
+      .finish();
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
+
+    if (transaction) {
+      headers['sentry-trace'] = transaction.toTraceparent();
+    }
 
     const res = await fetch(`/api/flashcards/${slug}`, {
       method: 'PUT',
@@ -95,13 +112,40 @@ export function useFlashcard(slug?: string) {
     });
 
     if (res.ok) {
+      transaction
+        .startChild({
+          op: 'mark',
+          description: '=== Mutating cache start ===',
+        })
+        .finish();
       await mutate(`/api/flashcards/${slug}`);
       await mutate('/api/flashcards');
+      transaction
+        .startChild({
+          op: 'mark',
+          description: '=== Mutating cache end ===',
+        })
+        .finish();
+
+      const serializeSpan = transaction.startChild({
+        op: 'serialize',
+        description: 'Serializing response',
+      });
 
       const data = await res.json();
 
+      serializeSpan.finish();
+      transaction.finish();
+
       return data;
     } else {
+      const errorSpan = transaction.startChild({
+        op: 'mark',
+        description: `Failed to delete flashcard. Reason: ${res.statusText}`,
+      });
+      errorSpan.finish();
+      transaction.finish();
+
       throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
     }
   };

@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import * as Sentry from '@sentry/nextjs';
 import sluggify from 'slugify';
 
 import {
@@ -33,18 +34,39 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
       res.status(200).json(flashcard);
       break;
     case 'PUT':
+      const scope = Sentry.getCurrentHub().getScope();
+      const transaction = scope?.getTransaction();
+
       var category = await getCategoryById(categoryId);
 
+      const categoryChecksSpan = transaction?.startChild({
+        op: 'function',
+        description: 'Category checks',
+      });
+
       if (!category) {
+        categoryChecksSpan?.setStatus('not_found');
+        categoryChecksSpan?.finish();
         return res.status(404).json({ message: 'Category not found' });
       }
       if (category.userId !== user.id) {
+        categoryChecksSpan?.setStatus('unauthenticated');
+        categoryChecksSpan?.finish();
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
+      categoryChecksSpan?.finish();
+
       var flashcard = await getFlashcard(slug as string, user);
 
+      const flashcardChecksSpan = transaction?.startChild({
+        op: 'function',
+        description: 'Flashcard checks',
+      });
+
       if (!flashcard) {
+        flashcardChecksSpan?.setStatus('not_found');
+        flashcardChecksSpan?.finish();
         return res.status(404).json({ message: 'Not found' });
       }
       if (
@@ -53,8 +75,12 @@ export default async function Api(req: NextApiRequest, res: NextApiResponse) {
         question.length === 0 ||
         answer.length === 0
       ) {
+        flashcardChecksSpan?.setStatus('unauthenticated');
+        flashcardChecksSpan?.finish();
         return res.status(400).json({ message: 'Invalid data' });
       }
+
+      flashcardChecksSpan?.finish();
 
       var updated = await updateFlashcard(flashcard.id, {
         question,
