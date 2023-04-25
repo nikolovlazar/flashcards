@@ -141,12 +141,12 @@ export function useFlashcard(slug?: string) {
     } else {
       const errorSpan = transaction.startChild({
         op: 'mark',
-        description: `Failed to delete flashcard. Reason: ${res.statusText}`,
+        description: `Failed to update flashcard. Reason: ${res.statusText}`,
       });
       errorSpan.finish();
       transaction.finish();
 
-      throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
+      throw new Error(`Failed to update flashcard. Reason: ${res.statusText}`);
     }
   };
 
