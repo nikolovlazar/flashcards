@@ -2,7 +2,7 @@
 // with Sentry.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-const { withSentryConfig } = require('@sentry/nextjs');
+const { withSentryConfig } = require("@sentry/nextjs");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -10,16 +10,19 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/manage/flashcards',
+        source: "/",
+        destination: "/manage/flashcards",
         permanent: false,
       },
       {
-        source: '/manage',
-        destination: '/manage/flashcards',
+        source: "/manage",
+        destination: "/manage/flashcards",
         permanent: false,
       },
     ];
+  },
+  sentry: {
+    hideSourceMaps: true,
   },
 };
 
