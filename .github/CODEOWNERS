@@ -1,2 +1,2 @@
-pages/manage/* @nikolovlazar
-pages/practice/* @drguthals
+src/hooks/flashcards.ts @nikolovlazar
+src/hooks/categories.ts @drguthals
