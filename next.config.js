@@ -21,11 +21,21 @@ const nextConfig = {
       },
     ];
   },
-  sentry: {
-    hideSourceMaps: true,
-  },
 };
 
-module.exports = nextConfig;
+const sentryWebpackPluginOptions = {
+  org: "sentry-devrel",
+  project: "flashcards",
+  silent: true,
+};
 
-module.exports = withSentryConfig(module.exports, { silent: true });
+const sentryOptions = {
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+};
+
+module.exports = withSentryConfig(
+  nextConfig,
+  sentryWebpackPluginOptions,
+  sentryOptions,
+);
