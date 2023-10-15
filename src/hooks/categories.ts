@@ -1,13 +1,13 @@
-import useSWR, { mutate } from 'swr';
-import type { Category, Flashcard } from '@prisma/client';
+import useSWR, { mutate } from "swr";
+import type { Category, Flashcard } from "@prisma/client";
 
 export function useCategories() {
   const { data: categories } = useSWR<Category[]>(
-    '/api/categories',
+    "/api/categories",
     async () => {
-      const res = await fetch('/api/categories', {
+      const res = await fetch("/api/categories", {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -15,17 +15,17 @@ export function useCategories() {
         return await res.json();
       } else {
         throw new Error(
-          `Failed to fetch flashcards. Reason: ${res.statusText}`
+          `Failed to fetch flashcards. Reason: ${res.statusText}`,
         );
       }
-    }
+    },
   );
 
   const create = async (name: string) => {
-    const res = await fetch('/api/categories', {
-      method: 'POST',
+    const res = await fetch("/api/categories", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name,
@@ -33,7 +33,7 @@ export function useCategories() {
     });
 
     if (res.ok) {
-      mutate('/api/categories');
+      mutate("/api/categories");
       return await res.json();
     } else {
       throw new Error(`Failed to create category. Reason: ${res.statusText}`);
@@ -52,7 +52,7 @@ export function useCategory(slug?: string) {
   >(slug && `/api/categories/${slug}`, async () => {
     const res = await fetch(`/api/categories/${slug}`, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -65,14 +65,14 @@ export function useCategory(slug?: string) {
 
   const remove = async () => {
     const res = await fetch(`/api/categories/${slug}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (res.ok) {
-      mutate('/api/categories');
+      mutate("/api/categories");
       return await res.json();
     } else {
       throw new Error(`Failed to delete category. Reason: ${res.statusText}`);
@@ -81,9 +81,9 @@ export function useCategory(slug?: string) {
 
   const update = async (slug: string, name: string) => {
     const res = await fetch(`/api/categories/${slug}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name,
@@ -92,10 +92,10 @@ export function useCategory(slug?: string) {
 
     if (res.ok) {
       mutate(`/api/categories/${slug}`);
-      mutate('/api/categories');
+      mutate("/api/categories");
       return await res.json();
     } else {
-      throw new Error(`Failed to delete category. Reason: ${res.statusText}`);
+      throw new Error(`Failed to update category. Reason: ${res.statusText}`);
     }
   };
 
