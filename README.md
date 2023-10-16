@@ -16,4 +16,4 @@ Then you'd need to setup your database, so follow these instructions:
 
 When you're done with that, you can start the app locally by running `pnpm dev` and visiting [localhost:3000](http://localhost:3000).
 
-You'll be met with a sign in screen. If you did the seed data, you can sign in with `admin@admin.com` as the email and `admin` as the password. Otherwise, you can create an account just by typing in your email and a passport. The "sign in" is actually "sign in or register".
+You'll be met with a sign in screen. If you did the seed data, you can sign in with `admin@admin.com` as the email and `admin` as the password. Otherwise, you can create an account just by typing in your email and a password. The "sign in" is actually "sign in or register".
