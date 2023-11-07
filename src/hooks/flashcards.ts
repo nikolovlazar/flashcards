@@ -1,14 +1,14 @@
-import useSWR, { mutate } from 'swr';
-import * as Sentry from '@sentry/nextjs';
-import type { Flashcard } from '@prisma/client';
+import useSWR, { mutate } from "swr";
+import * as Sentry from "@sentry/nextjs";
+import type { Flashcard } from "@prisma/client";
 
 export function useFlashcards() {
   const { data: flashcards } = useSWR<Flashcard[]>(
-    '/api/flashcards',
+    "/api/flashcards",
     async () => {
-      const res = await fetch('/api/flashcards', {
+      const res = await fetch("/api/flashcards", {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -16,25 +16,25 @@ export function useFlashcards() {
         return await res.json();
       } else {
         throw new Error(
-          `Failed to fetch flashcards. Reason: ${res.statusText}`
+          `Failed to fetch flashcards. Reason: ${res.statusText}`,
         );
       }
-    }
+    },
   );
 
   const create = async (
-    data: Pick<Flashcard, 'question' | 'answer' | 'categoryId'>
+    data: Pick<Flashcard, "question" | "answer" | "categoryId">,
   ) => {
-    const res = await fetch('/api/flashcards', {
-      method: 'POST',
+    const res = await fetch("/api/flashcards", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (res.ok) {
-      mutate('/api/flashcards');
+      mutate("/api/flashcards");
       return await res.json();
     } else {
       throw new Error(`Failed to create flashcard. Reason: ${res.statusText}`);
@@ -53,7 +53,7 @@ export function useFlashcard(slug?: string) {
     async () => {
       const res = await fetch(`/api/flashcards/${slug}`, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -61,22 +61,22 @@ export function useFlashcard(slug?: string) {
         return await res.json();
       } else {
         throw new Error(
-          `Failed to fetch flashcards. Reason: ${res.statusText}`
+          `Failed to fetch flashcards. Reason: ${res.statusText}`,
         );
       }
-    }
+    },
   );
 
   const remove = async () => {
     const res = await fetch(`/api/flashcards/${slug}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (res.ok) {
-      mutate('/api/flashcards');
+      mutate("/api/flashcards");
       return await res.json();
     } else {
       throw new Error(`Failed to delete flashcard. Reason: ${res.statusText}`);
@@ -86,50 +86,43 @@ export function useFlashcard(slug?: string) {
   const update = async (data: Partial<Flashcard>) => {
     const scope = Sentry.getCurrentHub().getScope();
     const transaction = Sentry.startTransaction({
-      name: 'Updating flashcard',
+      name: "Updating flashcard",
     });
     scope?.setSpan(transaction);
 
     transaction
       .startChild({
-        op: 'mark',
-        description: '=== Making the API request ===',
+        op: "mark",
+        description: "=== Making the API request ===",
       })
       .finish();
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (transaction) {
-      headers['sentry-trace'] = transaction.toTraceparent();
+      headers["sentry-trace"] = transaction.toTraceparent();
     }
 
     const res = await fetch(`/api/flashcards/${slug}`, {
-      method: 'PUT',
+      method: "PUT",
       headers,
       body: JSON.stringify(data),
     });
 
     if (res.ok) {
-      transaction
-        .startChild({
-          op: 'mark',
-          description: '=== Mutating cache start ===',
-        })
-        .finish();
+      const mutatingCacheSpan = transaction.startChild({
+        op: "cache",
+        description: "Mutating SWR cache",
+      });
       await mutate(`/api/flashcards/${slug}`);
-      await mutate('/api/flashcards');
-      transaction
-        .startChild({
-          op: 'mark',
-          description: '=== Mutating cache end ===',
-        })
-        .finish();
+      await mutate("/api/flashcards");
+      mutatingCacheSpan.finish();
 
       const serializeSpan = transaction.startChild({
-        op: 'serialize',
-        description: 'Serializing response',
+        op: "serialize",
+        description: "Serializing response",
       });
 
       const data = await res.json();
@@ -140,7 +133,7 @@ export function useFlashcard(slug?: string) {
       return data;
     } else {
       const errorSpan = transaction.startChild({
-        op: 'mark',
+        op: "mark",
         description: `Failed to update flashcard. Reason: ${res.statusText}`,
       });
       errorSpan.finish();
