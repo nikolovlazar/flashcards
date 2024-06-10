@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
-import MainLayout from '../../src/layouts/main';
-import PracticeLayout from '../../src/layouts/practice';
+import MainLayout from '../../src-old/layouts/main';
+import PracticeLayout from '../../src-old/layouts/practice';
 
 export default function Page() {
   return <></>;

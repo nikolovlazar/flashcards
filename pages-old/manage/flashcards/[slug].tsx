@@ -32,10 +32,10 @@ import {
   getFlashcard,
   getUserFromSession,
 } from '../../../prisma/helpers';
-import { PageHeader } from '../../../src/components/page-header';
-import { useFlashcard } from '../../../src/hooks';
-import MainLayout from '../../../src/layouts/main';
-import ManageLayout from '../../../src/layouts/manage';
+import { PageHeader } from '../../../src-old/components/page-header';
+import { useFlashcard } from '../../../src-old/hooks';
+import MainLayout from '../../../src-old/layouts/main';
+import ManageLayout from '../../../src-old/layouts/manage';
 import { getSession } from '../../../utils/auth';
 
 enum ValuesActionKind {

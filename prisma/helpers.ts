@@ -1,20 +1,14 @@
-import { Prisma, User } from '@prisma/client';
-import { Session } from 'next-auth';
+import { Prisma } from '@prisma/client';
 import prisma from '.';
 
-export const getFlashcards = async (user: User) => {
-  return await prisma.flashcard.findMany({
-    where: {
-      userId: user.id,
-    },
-  });
+export const getFlashcards = async () => {
+  return await prisma.flashcard.findMany();
 };
 
-export const getFlashcard = async (slug: string, user: User) => {
+export const getFlashcard = async (slug: string) => {
   return await prisma.flashcard.findFirst({
     where: {
       slug,
-      userId: user.id,
     },
   });
 };
@@ -37,8 +31,8 @@ export const updateFlashcard = async (
   });
 };
 
-export const deleteFlashcard = async (slug: string, user: User) => {
-  const flashcard = await getFlashcard(slug, user);
+export const deleteFlashcard = async (slug: string) => {
+  const flashcard = await getFlashcard(slug);
   if (flashcard) {
     return await prisma.flashcard.delete({
       where: {
@@ -48,12 +42,8 @@ export const deleteFlashcard = async (slug: string, user: User) => {
   }
 };
 
-export const getCategories = async (user: User) => {
-  return await prisma.category.findMany({
-    where: {
-      userId: user.id,
-    },
-  });
+export const getCategories = async () => {
+  return await prisma.category.findMany();
 };
 
 export const getCategoryById = async (id: number) => {
@@ -64,11 +54,10 @@ export const getCategoryById = async (id: number) => {
   });
 };
 
-export const getCategory = async (slug: string, user: User) => {
+export const getCategory = async (slug: string) => {
   return await prisma.category.findFirst({
     where: {
       slug,
-      userId: user.id,
     },
     include: {
       flashcards: true,
@@ -94,8 +83,8 @@ export const updateCategory = async (
   });
 };
 
-export const deleteCategory = async (slug: string, user: User) => {
-  const category = await getCategory(slug, user);
+export const deleteCategory = async (slug: string) => {
+  const category = await getCategory(slug);
   if (category) {
     return await prisma.category.delete({
       where: {
@@ -103,15 +92,4 @@ export const deleteCategory = async (slug: string, user: User) => {
       },
     });
   }
-};
-
-export const getUserFromSession = async (session: Session) => {
-  if (!session.user) return null;
-  if (!session.user.email) return null;
-
-  return await prisma.user.findUnique({
-    where: {
-      email: session.user.email,
-    },
-  });
 };

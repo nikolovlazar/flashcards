@@ -24,9 +24,9 @@ import {
 import type { GetServerSideProps } from 'next/types';
 import type { Category, Flashcard } from '@prisma/client';
 
-import { PageHeader } from '../../../src/components/page-header';
-import MainLayout from '../../../src/layouts/main';
-import PracticeLayout from '../../../src/layouts/practice';
+import { PageHeader } from '../../../src-old/components/page-header';
+import MainLayout from '../../../src-old/layouts/main';
+import PracticeLayout from '../../../src-old/layouts/practice';
 import { shuffleArray } from '../../../utils/array';
 import { getSession } from '../../../utils/auth';
 import { getCategory, getUserFromSession } from '../../../prisma/helpers';

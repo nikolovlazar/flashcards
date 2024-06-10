@@ -20,10 +20,10 @@ import NextLink from 'next/link';
 import { type ReactNode, useReducer, useState, useEffect } from 'react';
 import { getCategories, getUserFromSession } from '../../../prisma/helpers';
 
-import { PageHeader } from '../../../src/components/page-header';
-import { useFlashcards } from '../../../src/hooks';
-import MainLayout from '../../../src/layouts/main';
-import ManageLayout from '../../../src/layouts/manage';
+import { PageHeader } from '../../../src-old/components/page-header';
+import { useFlashcards } from '../../../src-old/hooks';
+import MainLayout from '../../../src-old/layouts/main';
+import ManageLayout from '../../../src-old/layouts/manage';
 import { getSession } from '../../../utils/auth';
 
 enum ValuesActionKind {

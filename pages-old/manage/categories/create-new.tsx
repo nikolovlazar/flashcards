@@ -15,10 +15,10 @@ import {
 } from '@chakra-ui/react';
 import { useState, type ReactNode } from 'react';
 
-import { useCategories } from '../../../src/hooks';
-import { PageHeader } from '../../../src/components/page-header';
-import MainLayout from '../../../src/layouts/main';
-import ManageLayout from '../../../src/layouts/manage';
+import { useCategories } from '../../../src-old/hooks';
+import { PageHeader } from '../../../src-old/components/page-header';
+import MainLayout from '../../../src-old/layouts/main';
+import ManageLayout from '../../../src-old/layouts/manage';
 
 export default function Page() {
   const { create } = useCategories();

@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import type { NextComponentType } from 'next/types';
 
-import { theme } from '../src/theme';
+import { theme } from '../src-old/theme';
 
 type LayoutComponent = NextComponentType & {
   getLayout?: (page: React.ReactNode) => React.ReactNode;
