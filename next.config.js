@@ -7,6 +7,15 @@ const { withSentryConfig } = require('@sentry/nextjs');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/manage',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 const sentryWebpackPluginOptions = {
