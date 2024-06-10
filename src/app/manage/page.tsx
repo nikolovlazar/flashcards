@@ -7,6 +7,7 @@ import { DataTable } from './data-table';
 import { categoriesColumns } from './_categories/categories-columns';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import CreateCategory from './_categories/create-category-dialog';
+import CreateFlashcard from './_flashcards/create-flashcard-dialog';
 
 export default function Manage() {
   const categories: Category[] = [
@@ -98,7 +99,10 @@ export default function Manage() {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader className='font-bold text-3xl'>Flashcards</CardHeader>
+        <CardHeader className='flex flex-row justify-between items-center'>
+          <span className='font-bold text-3xl'>Flashcards</span>
+          <CreateFlashcard categories={categories} />
+        </CardHeader>
         <CardContent>
           <DataTable columns={flashcardsColumns} data={flashcards} />
         </CardContent>

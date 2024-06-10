@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import EditCategory from './edit-category-dialog';
+import ConfirmDelete from './confirm-category-delete';
 
 export const categoriesColumns: ColumnDef<Category>[] = [
   {
@@ -38,8 +40,22 @@ export const categoriesColumns: ColumnDef<Category>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <EditCategory category={category}>
+              <DropdownMenuItem
+                className='cursor-pointer'
+                onSelect={(e) => e.preventDefault()}
+              >
+                Edit
+              </DropdownMenuItem>
+            </EditCategory>
+            <ConfirmDelete category={category}>
+              <DropdownMenuItem
+                className='cursor-pointer text-red-500'
+                onSelect={(e) => e.preventDefault()}
+              >
+                Delete
+              </DropdownMenuItem>
+            </ConfirmDelete>
           </DropdownMenuContent>
         </DropdownMenu>
       );

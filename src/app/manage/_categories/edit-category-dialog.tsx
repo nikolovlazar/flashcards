@@ -9,29 +9,37 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
+import { Category } from '@prisma/client';
+import { type ReactNode } from 'react';
 
-export default function CreateCategory() {
+export default function EditCategory({
+  category,
+  children,
+}: {
+  category: Category;
+  children: ReactNode;
+}) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='secondary' size='icon'>
-          <Plus />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='gap-6'>
         <DialogHeader>
-          <DialogTitle>Create a new category</DialogTitle>
+          <DialogTitle>Edit {category.name}</DialogTitle>
         </DialogHeader>
         <form id='create-category' className=''>
           <div className='grid gap-2'>
             <Label htmlFor='name'>Name</Label>
-            <Input id='name' name='name' placeholder='JavaScript' required />
+            <Input
+              id='name'
+              name='name'
+              placeholder={category.name}
+              defaultValue={category.name}
+            />
           </div>
         </form>
         <DialogFooter>
           <Button form='create-category' type='submit'>
-            Create
+            Update
           </Button>
         </DialogFooter>
       </DialogContent>
