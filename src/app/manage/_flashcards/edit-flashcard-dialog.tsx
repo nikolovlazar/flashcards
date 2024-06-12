@@ -14,35 +14,36 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { Category } from '@prisma/client';
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
+import type { FlashcardColumn } from './flashcards-columns';
 
-export default function CreateFlashcard({
+export default function EditFlashcard({
+  flashcard,
   categories,
+  children,
 }: {
+  flashcard: FlashcardColumn;
   categories: Category[];
+  children: ReactNode;
 }) {
   const [selectedCategory, setSelectedCategory] = useState<Category>(
-    categories[0]
+    flashcard.category
   );
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='secondary' size='icon'>
-          <Plus />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='gap-6'>
         <DialogHeader>
-          <DialogTitle>Create a new flashcard</DialogTitle>
+          <DialogTitle>Edit {flashcard.question}</DialogTitle>
         </DialogHeader>
-        <form id='create-flashcard' className='grid gap-4'>
+        <form id='edit-flashcard' className='grid gap-4'>
           <div className='grid gap-2'>
             <Label htmlFor='question'>Question</Label>
             <Input
               id='question'
               name='question'
-              placeholder='What is JavaScript?'
+              defaultValue={flashcard.question}
+              placeholder={flashcard.question}
               required
             />
           </div>
@@ -52,7 +53,8 @@ export default function CreateFlashcard({
               id='answer'
               name='answer'
               required
-              placeholder='JavaScript is a programming language.'
+              placeholder={flashcard.answer}
+              defaultValue={flashcard.answer}
             />
           </div>
           <div className='grid gap-2'>
@@ -83,8 +85,8 @@ export default function CreateFlashcard({
           </div>
         </form>
         <DialogFooter>
-          <Button form='create-flashcard' type='submit'>
-            Create
+          <Button form='update-flashcard' type='submit'>
+            Update
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -15,19 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { type Category } from '@prisma/client';
+import { categoriesColumns } from './categories-columns';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
-
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function CategoriesDataTable({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const table = useReactTable({
-    data,
-    columns,
+    data: categories,
+    columns: categoriesColumns,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -68,7 +65,10 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center'>
+              <TableCell
+                colSpan={categoriesColumns.length}
+                className='h-24 text-center'
+              >
                 No results.
               </TableCell>
             </TableRow>
