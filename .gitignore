@@ -47,3 +47,7 @@ next.config.original.js
 
 # Sentry Config File
 .sentryclirc
+
+
+# Prisma generated DB
+prisma/dev.db
