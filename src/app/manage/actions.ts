@@ -15,9 +15,19 @@ export async function createCategory(formData: FormData) {
     };
   }
 
+  const slug = slugify(formValues.name, { lower: true });
+
+  const existingCategory = await helpers.getCategory(slug);
+
+  if (existingCategory) {
+    return {
+      error: 'Category already exists',
+    };
+  }
+
   const category = await helpers.createCategory({
     name: formValues.name,
-    slug: slugify(formValues.name, { lower: true }),
+    slug,
   });
 
   revalidatePath('/manage');
