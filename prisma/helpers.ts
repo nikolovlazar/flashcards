@@ -5,6 +5,14 @@ export const getFlashcards = async () => {
   return await prisma.flashcard.findMany();
 };
 
+export const getFlashcardsByCategoryId = async (categoryId: number) => {
+  return await prisma.flashcard.findMany({
+    where: {
+      categoryId,
+    },
+  });
+};
+
 export const getFlashcard = async (slug: string) => {
   return await prisma.flashcard.findFirst({
     where: {
