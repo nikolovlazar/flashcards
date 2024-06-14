@@ -20,7 +20,6 @@ export default function CreateCategory() {
   const [open, setOpen] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    // TODO: explain that the form was reloading the page, not the server actions
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const res = await createCategory(formData);
