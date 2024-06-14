@@ -12,7 +12,7 @@ export default async function Manage() {
   });
 
   return (
-    <div className='flex flex-col md:flex-row gap-6'>
+    <div className='flex flex-col lg:flex-row gap-6'>
       <Card>
         <CardHeader className='flex flex-row justify-between items-center'>
           <span className='font-bold text-3xl'>Categories</span>
