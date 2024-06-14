@@ -16,6 +16,9 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Category } from '@prisma/client';
 import { type ReactNode, useState } from 'react';
 import type { FlashcardColumn } from './flashcards-columns';
+import { HiddenInput } from '@/components/ui/hidden-input';
+import { toast } from 'sonner';
+import { updateFlashcard } from '../actions';
 
 export default function EditFlashcard({
   flashcard,
@@ -26,17 +29,36 @@ export default function EditFlashcard({
   categories: Category[];
   children: ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const res = await updateFlashcard(formData);
+    if (res.error) {
+      toast.error(res.error);
+    } else {
+      toast.success('Flashcard updated');
+      setOpen(false);
+    }
+  };
+
   const [selectedCategory, setSelectedCategory] = useState<Category>(
     flashcard.category
   );
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='gap-6'>
         <DialogHeader>
           <DialogTitle>Edit {flashcard.question}</DialogTitle>
         </DialogHeader>
-        <form id='edit-flashcard' className='grid gap-4'>
+        <form
+          onSubmit={handleSubmit}
+          id='edit-flashcard'
+          className='grid gap-4'
+        >
+          <HiddenInput name='id' value={`${flashcard.id}`} />
           <div className='grid gap-2'>
             <Label htmlFor='question'>Question</Label>
             <Input
@@ -85,7 +107,7 @@ export default function EditFlashcard({
           </div>
         </form>
         <DialogFooter>
-          <Button form='update-flashcard' type='submit'>
+          <Button form='edit-flashcard' type='submit'>
             Update
           </Button>
         </DialogFooter>

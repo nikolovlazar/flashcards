@@ -13,6 +13,14 @@ export const getFlashcard = async (slug: string) => {
   });
 };
 
+export const getFlashcardById = async (id: number) => {
+  return await prisma.flashcard.findFirst({
+    where: {
+      id,
+    },
+  });
+};
+
 export const createFlashcard = async (data: Prisma.FlashcardCreateInput) => {
   return await prisma.flashcard.create({
     data,

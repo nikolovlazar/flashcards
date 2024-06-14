@@ -33,7 +33,7 @@ export default function ConfirmDelete({
     if (res.error) {
       toast.error(res.error);
     } else {
-      toast.success('Category created');
+      toast.success('Category deleted');
       setOpen(false);
     }
   };

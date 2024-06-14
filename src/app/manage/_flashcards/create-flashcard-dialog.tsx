@@ -16,17 +16,33 @@ import { Textarea } from '@/components/ui/textarea';
 import type { Category } from '@prisma/client';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { createFlashcard } from '../actions';
 
 export default function CreateFlashcard({
   categories,
 }: {
   categories: Category[];
 }) {
+  const [open, setOpen] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const res = await createFlashcard(formData);
+    if (res.error) {
+      toast.error(res.error);
+    } else {
+      toast.success('Flashcard created');
+      setOpen(false);
+    }
+  };
+
   const [selectedCategory, setSelectedCategory] = useState<Category>(
     categories[0]
   );
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant='secondary' size='icon'>
           <Plus />
@@ -36,7 +52,11 @@ export default function CreateFlashcard({
         <DialogHeader>
           <DialogTitle>Create a new flashcard</DialogTitle>
         </DialogHeader>
-        <form id='create-flashcard' className='grid gap-4'>
+        <form
+          onSubmit={handleSubmit}
+          id='create-flashcard'
+          className='grid gap-4'
+        >
           <div className='grid gap-2'>
             <Label htmlFor='question'>Question</Label>
             <Input
