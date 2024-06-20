@@ -1,6 +1,6 @@
 # Flashcards 🧠
 
-Flashcards is a simple CRUD app that allows users to create their own flashcards and categories, and lets them practice by showing them the cards. This project is part of a workshop I'm doing at [Sentry.io](https://sentry.io/welcome).
+Flashcards is a simple CRUD app that allows users to create their own flashcards and categories, and lets them practice by showing them the cards. This project is part of a workshop we're doing at [Sentry.io](https://sentry.io/welcome).
 
 ## Getting started
 - `npm install`
