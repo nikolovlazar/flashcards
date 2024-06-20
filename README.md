@@ -2,13 +2,7 @@
 
 Flashcards is a simple CRUD app that allows users to create their own flashcards and categories, and lets them practice by showing them the cards (can be by order or random). The goal of this app is to demonstrate Distributed Tracing in [Next.js](https://nextjs.org) using [Sentry](https://sentry.io/welcome).
 
-
-
-
-
-
-
-## NEW LOCAL 
+## Getting started
 - `npm install`
 - change `.example.env` to `.env`
 - `npx prisma migrate reset`
