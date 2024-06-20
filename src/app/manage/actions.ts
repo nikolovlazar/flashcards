@@ -16,6 +16,10 @@ export async function createCategory(formData: FormData) {
     };
   }
 
+  if (formValues.name.length < 5) {
+    return;
+  }
+
   const slug = slugify(formValues.name, { lower: true });
 
   const existingCategory = await helpers.getCategory(slug);
