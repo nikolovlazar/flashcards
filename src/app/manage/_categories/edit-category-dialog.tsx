@@ -58,7 +58,7 @@ export default function EditCategory({
           </div>
         </form>
         <DialogFooter>
-          <Button form='create-category' type='submit'>
+          <Button>
             Update
           </Button>
         </DialogFooter>
