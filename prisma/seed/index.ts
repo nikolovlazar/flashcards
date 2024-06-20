@@ -1,13 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
-import users from './data/users.json';
-import categories from './data/categories.json';
-import flashcards from './data/flashcards.json';
+import { categories } from './data/categories';
+import { flashcards } from './data/flashcards';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.user.createMany({ data: users });
   await prisma.category.createMany({ data: categories });
   await prisma.flashcard.createMany({ data: flashcards });
 }

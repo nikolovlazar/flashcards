@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -18,11 +16,11 @@
       {
         "name": "next"
       }
-    ]
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/prisma/*": ["./prisma/*"],
+      "@/prisma": ["./prisma"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
