@@ -1,59 +1,56 @@
-'use server';
+"use server";
 
-import * as helpers from '@/prisma/helpers';
-import { Prisma } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
-import slugify from 'slugify';
+import { z } from "zod";
+import * as helpers from "@/prisma/helpers";
+import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import slugify from "slugify";
+
+const createCategorySchema = z.object({
+  name: z.string().min(5),
+});
 
 export async function createCategory(formData: FormData) {
   const formValues = {
-    name: formData.get('name')?.toString(),
+    name: formData.get("name")?.toString(),
   };
 
-  if (!formValues.name) {
-    return {
-      error: 'Name is required',
-    };
-  }
+  const data = createCategorySchema.parse(formValues);
 
-  if (formValues.name.length < 5) {
-    return;
-  }
-
-  const slug = slugify(formValues.name, { lower: true });
+  const slug = slugify(data.name, { lower: true });
 
   const existingCategory = await helpers.getCategory(slug);
 
   if (existingCategory) {
     return {
-      error: 'Category already exists',
+      error: "Category already exists",
     };
   }
 
   const category = await helpers.createCategory({
-    name: formValues.name,
+    name: data.name,
     slug,
   });
 
-  revalidatePath('/manage');
+  revalidatePath("/manage");
   return { category };
 }
 
 export async function updateCategory(formData: FormData) {
   const formValues = {
-    id: formData.get('id')?.toString(),
-    name: formData.get('name')?.toString(),
+    id: formData.get("id")?.toString(),
+    name: formData.get("name")?.toString(),
   };
 
   if (!formValues.id) {
     return {
-      error: 'Category ID is missing',
+      error: "Category ID is missing",
     };
   }
 
   if (!formValues.name) {
     return {
-      error: 'Name is required',
+      error: "Name is required",
     };
   }
 
@@ -73,18 +70,18 @@ export async function updateCategory(formData: FormData) {
     slug,
   });
 
-  revalidatePath('/manage');
+  revalidatePath("/manage");
   return { category };
 }
 
 export async function deleteCategory(formData: FormData) {
   const formValues = {
-    id: formData.get('id')?.toString(),
+    id: formData.get("id")?.toString(),
   };
 
   if (!formValues.id) {
     return {
-      error: 'Category ID is missing',
+      error: "Category ID is missing",
     };
   }
 
@@ -99,32 +96,32 @@ export async function deleteCategory(formData: FormData) {
 
   await helpers.deleteCategory(existingCategory.slug);
 
-  revalidatePath('/manage');
+  revalidatePath("/manage");
   return { success: true };
 }
 
 export async function createFlashcard(formData: FormData) {
   const formValues = {
-    question: formData.get('question')?.toString(),
-    answer: formData.get('answer')?.toString(),
-    category: formData.get('category')?.toString(),
+    question: formData.get("question")?.toString(),
+    answer: formData.get("answer")?.toString(),
+    category: formData.get("category")?.toString(),
   };
 
   if (!formValues.question) {
     return {
-      error: 'Question is required',
+      error: "Question is required",
     };
   }
 
   if (!formValues.answer) {
     return {
-      error: 'Answer is required',
+      error: "Answer is required",
     };
   }
 
   if (!formValues.category) {
     return {
-      error: 'Category is required',
+      error: "Category is required",
     };
   }
 
@@ -134,7 +131,7 @@ export async function createFlashcard(formData: FormData) {
 
   if (!existingCategory) {
     return {
-      error: 'Category not found',
+      error: "Category not found",
     };
   }
 
@@ -151,31 +148,31 @@ export async function createFlashcard(formData: FormData) {
     slug,
   });
 
-  revalidatePath('/manage');
+  revalidatePath("/manage");
   return { flashcard };
 }
 
 export async function updateFlashcard(formData: FormData) {
   const formValues = {
-    id: formData.get('id')?.toString(),
-    question: formData.get('question')?.toString(),
-    answer: formData.get('answer')?.toString(),
-    category: formData.get('category')?.toString(),
+    id: formData.get("id")?.toString(),
+    question: formData.get("question")?.toString(),
+    answer: formData.get("answer")?.toString(),
+    category: formData.get("category")?.toString(),
   };
 
   if (!formValues.id) {
     return {
-      error: 'Flashcard ID is missing',
+      error: "Flashcard ID is missing",
     };
   }
 
   const existingFlashcard = await helpers.getFlashcardById(
-    parseInt(formValues.id, 10)
+    parseInt(formValues.id, 10),
   );
 
   if (!existingFlashcard) {
     return {
-      error: 'Flashcard not found',
+      error: "Flashcard not found",
     };
   }
 
@@ -193,7 +190,7 @@ export async function updateFlashcard(formData: FormData) {
 
     if (!existingCategory) {
       return {
-        error: 'Category not found',
+        error: "Category not found",
       };
     }
 
@@ -206,21 +203,21 @@ export async function updateFlashcard(formData: FormData) {
 
   const updatedFlashcard = await helpers.updateFlashcard(
     existingFlashcard.id,
-    updateData
+    updateData,
   );
 
-  revalidatePath('/manage');
+  revalidatePath("/manage");
   return { flashcard: updatedFlashcard };
 }
 
 export async function deleteFlashcard(formData: FormData) {
   const formValues = {
-    id: formData.get('id')?.toString(),
+    id: formData.get("id")?.toString(),
   };
 
   if (!formValues.id) {
     return {
-      error: 'Flashcard ID is missing',
+      error: "Flashcard ID is missing",
     };
   }
 
@@ -230,12 +227,12 @@ export async function deleteFlashcard(formData: FormData) {
 
   if (!existingFlashcard) {
     return {
-      error: 'Flashcard not found',
+      error: "Flashcard not found",
     };
   }
 
   await helpers.deleteFlashcard(existingFlashcard.slug);
 
-  revalidatePath('/manage');
+  revalidatePath("/manage");
   return { success: true };
 }
