@@ -3,14 +3,16 @@
 Flashcards is a simple CRUD app that allows users to create their own flashcards and categories, and lets them practice by showing them the cards. This project is part of a workshop we're doing at [Sentry.io](https://sentry.io/welcome).
 
 ## Getting started
+
 - `npm install`
 - `cp .example.env .env`
 - `npx prisma migrate reset`
 - Create Sentry account
 - Create Sentry project "flashcards"
-- Add project DSN (Sentry Settings -> Project -> DSN) to the `.env`
+- Run the Sentry Next.js wizard: `npx @sentry/wizard@latest -i nextjs`
 
 ## Finding Bugs
+
 - Test out all the features of the Flashcards app
 - When you encounter an error or notice a performance issue, go check Sentry
 - It's more than likely your error has been picked up by Sentry
