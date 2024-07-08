@@ -1,4 +1,4 @@
-import * as helpers from '@/prisma/helpers';
+import * as helpers from "@/prisma/helpers";
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const categoryId = parseInt(params.id, 10);
@@ -7,7 +7,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   if (!category) {
     return Response.json(
       {
-        error: 'Category not found',
+        error: "Category not found",
       },
       { status: 404 }
     );

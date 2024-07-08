@@ -3,8 +3,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/manage',
+        source: "/",
+        destination: "/manage",
         permanent: true,
       },
     ];

@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import prisma from '.';
+import { Prisma } from "@prisma/client";
+import prisma from ".";
 
 export const getFlashcards = async () => {
   return await prisma.flashcard.findMany();

@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-import { categories } from './data/categories';
-import { flashcards } from './data/flashcards';
+import { categories } from "./data/categories";
+import { flashcards } from "./data/flashcards";
 
 const prisma = new PrismaClient();
 

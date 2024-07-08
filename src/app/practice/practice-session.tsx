@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { Suspense, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Suspense, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Category } from '@prisma/client';
-import { Loader2, Play } from 'lucide-react';
+} from "@/components/ui/select";
+import { Category } from "@prisma/client";
+import { Loader2, Play } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import Flashcards from './flashcards';
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import Flashcards from "./flashcards";
 
 export default function Practice({ categories }: { categories: Category[] }) {
   const [selectedCategory, setSelectedCategory] = useState<Category>(
@@ -27,9 +27,9 @@ export default function Practice({ categories }: { categories: Category[] }) {
   const [sessionStarted, setSessionStarted] = useState(false);
 
   return (
-    <div className='flex flex-col items-center justify-start gap-12'>
+    <div className="flex flex-col items-center justify-start gap-12">
       <Card>
-        <CardContent className='flex items-center p-6 gap-6'>
+        <CardContent className="flex items-center p-6 gap-6">
           <Select
             defaultValue={categories[0].slug}
             value={selectedCategory.slug}
@@ -37,8 +37,8 @@ export default function Practice({ categories }: { categories: Category[] }) {
               setSelectedCategory(categories.find((c) => c.slug === slug)!)
             }
           >
-            <SelectTrigger className='w-[200px]'>
-              <SelectValue placeholder='Select category' />
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
               {categories.map((category) => (
@@ -51,7 +51,7 @@ export default function Practice({ categories }: { categories: Category[] }) {
         </CardContent>
       </Card>
       {sessionStarted ? (
-        <Suspense fallback={<Loader2 className='animate animate-spin' />}>
+        <Suspense fallback={<Loader2 className="animate animate-spin" />}>
           <Flashcards category={selectedCategory} />
         </Suspense>
       ) : (
@@ -59,11 +59,11 @@ export default function Practice({ categories }: { categories: Category[] }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant='outline'
-                aria-label='Start practice session'
+                variant="outline"
+                aria-label="Start practice session"
                 onClick={() => setSessionStarted(true)}
               >
-                <Play className='h-4 w-4 mr-2' />
+                <Play className="h-4 w-4 mr-2" />
                 Start practice session
               </Button>
             </TooltipTrigger>

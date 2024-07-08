@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   AlertDialog,
@@ -10,12 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { HiddenInput } from '@/components/ui/hidden-input';
-import type { Category } from '@prisma/client';
-import { useState, type ReactNode } from 'react';
-import { deleteCategory } from '../actions';
-import { toast } from 'sonner';
+} from "@/components/ui/alert-dialog";
+import { HiddenInput } from "@/components/ui/hidden-input";
+import type { Category } from "@prisma/client";
+import { useState, type ReactNode } from "react";
+import { deleteCategory } from "../actions";
+import { toast } from "sonner";
 
 export default function ConfirmDelete({
   category,
@@ -33,7 +33,7 @@ export default function ConfirmDelete({
     if (res.error) {
       toast.error(res.error);
     } else {
-      toast.success('Category deleted');
+      toast.success("Category deleted");
       setOpen(false);
     }
   };
@@ -54,11 +54,11 @@ export default function ConfirmDelete({
         </AlertDialogHeader>
         <form onSubmit={handleSubmit}>
           <AlertDialogFooter>
-            <HiddenInput name='id' value={`${category.id}`} />
+            <HiddenInput name="id" value={`${category.id}`} />
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              type='submit'
-              className='bg-destructive hover:bg-destructive/80'
+              type="submit"
+              className="bg-destructive hover:bg-destructive/80"
             >
               Delete
             </AlertDialogAction>

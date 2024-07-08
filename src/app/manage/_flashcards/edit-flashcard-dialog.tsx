@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import CategorySelect from './select-category';
+import { Button } from "@/components/ui/button";
+import CategorySelect from "./select-category";
 import {
   Dialog,
   DialogContent,
@@ -9,16 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import type { Category } from '@prisma/client';
-import { type ReactNode, useState } from 'react';
-import type { FlashcardColumn } from './flashcards-columns';
-import { HiddenInput } from '@/components/ui/hidden-input';
-import { toast } from 'sonner';
-import { updateFlashcard } from '../actions';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import type { Category } from "@prisma/client";
+import { type ReactNode, useState } from "react";
+import type { FlashcardColumn } from "./flashcards-columns";
+import { HiddenInput } from "@/components/ui/hidden-input";
+import { toast } from "sonner";
+import { updateFlashcard } from "../actions";
 
 export default function EditFlashcard({
   flashcard,
@@ -38,7 +38,7 @@ export default function EditFlashcard({
     if (res.error) {
       toast.error(res.error);
     } else {
-      toast.success('Flashcard updated');
+      toast.success("Flashcard updated");
       setOpen(false);
     }
   };
@@ -49,47 +49,47 @@ export default function EditFlashcard({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className='gap-6'>
+      <DialogContent className="gap-6">
         <DialogHeader>
           <DialogTitle>Edit {flashcard.question}</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={handleSubmit}
-          id='edit-flashcard'
-          className='grid gap-4'
+          id="edit-flashcard"
+          className="grid gap-4"
         >
-          <HiddenInput name='id' value={`${flashcard.id}`} />
-          <div className='grid gap-2'>
-            <Label htmlFor='question'>Question</Label>
+          <HiddenInput name="id" value={`${flashcard.id}`} />
+          <div className="grid gap-2">
+            <Label htmlFor="question">Question</Label>
             <Input
-              id='question'
-              name='question'
+              id="question"
+              name="question"
               defaultValue={flashcard.question}
               placeholder={flashcard.question}
               required
             />
           </div>
-          <div className='grid gap-2'>
-            <Label htmlFor='answer'>Answer</Label>
+          <div className="grid gap-2">
+            <Label htmlFor="answer">Answer</Label>
             <Textarea
-              id='answer'
-              name='answer'
+              id="answer"
+              name="answer"
               required
               placeholder={flashcard.answer}
               defaultValue={flashcard.answer}
             />
           </div>
-          <div className='grid gap-2'>
-            <Label htmlFor='answer'>Add to category</Label>
+          <div className="grid gap-2">
+            <Label htmlFor="answer">Add to category</Label>
             <input
-              name='category'
+              name="category"
               readOnly
-              type='text'
+              type="text"
               hidden
               aria-hidden
               aria-readonly
               value={selectedCategory.id}
-              className='hidden'
+              className="hidden"
             />
             <CategorySelect
               defaultValue={{
@@ -107,7 +107,7 @@ export default function EditFlashcard({
           </div>
         </form>
         <DialogFooter>
-          <Button form='edit-flashcard' type='submit'>
+          <Button form="edit-flashcard" type="submit">
             Update
           </Button>
         </DialogFooter>

@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,12 +10,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 
 export default function CategorySelect({
   categories,
@@ -33,20 +33,20 @@ export default function CategorySelect({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant='outline'
-          role='combobox'
+          variant="outline"
+          role="combobox"
           aria-expanded={open}
-          className='w-[200px] justify-between'
+          className="w-[200px] justify-between"
         >
           {value
             ? categories.find((category) => category.value === value)?.label
-            : 'Select category...'}
-          <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+            : "Select category..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[200px] p-0'>
+      <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder='Search for category...' />
+          <CommandInput placeholder="Search for category..." />
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
@@ -62,8 +62,8 @@ export default function CategorySelect({
                 >
                   <Check
                     className={cn(
-                      'mr-2 h-4 w-4',
-                      value === category.value ? 'opacity-100' : 'opacity-0'
+                      "mr-2 h-4 w-4",
+                      value === category.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {category.label}

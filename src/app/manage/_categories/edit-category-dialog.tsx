@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,14 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Category } from '@prisma/client';
-import { useState, type ReactNode } from 'react';
-import { updateCategory } from '../actions';
-import { toast } from 'sonner';
-import { HiddenInput } from '@/components/ui/hidden-input';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Category } from "@prisma/client";
+import { useState, type ReactNode } from "react";
+import { updateCategory } from "../actions";
+import { toast } from "sonner";
+import { HiddenInput } from "@/components/ui/hidden-input";
 
 export default function EditCategory({
   category,
@@ -33,7 +33,7 @@ export default function EditCategory({
     if (res.error) {
       toast.error(res.error);
     } else {
-      toast.success('Category updated');
+      toast.success("Category updated");
       setOpen(false);
     }
   };
@@ -41,26 +41,24 @@ export default function EditCategory({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className='gap-6'>
+      <DialogContent className="gap-6">
         <DialogHeader>
           <DialogTitle>Edit {category.name}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} id='create-category' className=''>
-          <HiddenInput name='id' value={`${category.id}`} />
-          <div className='grid gap-2'>
-            <Label htmlFor='name'>Name</Label>
+        <form onSubmit={handleSubmit} id="create-category" className="">
+          <HiddenInput name="id" value={`${category.id}`} />
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
             <Input
-              id='name'
-              name='name'
+              id="name"
+              name="name"
               placeholder={category.name}
               defaultValue={category.name}
             />
           </div>
         </form>
         <DialogFooter>
-          <Button>
-            Update
-          </Button>
+          <Button>Update</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

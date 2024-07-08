@@ -167,7 +167,7 @@ export async function updateFlashcard(formData: FormData) {
   }
 
   const existingFlashcard = await helpers.getFlashcardById(
-    parseInt(formValues.id, 10),
+    parseInt(formValues.id, 10)
   );
 
   if (!existingFlashcard) {
@@ -203,7 +203,7 @@ export async function updateFlashcard(formData: FormData) {
 
   const updatedFlashcard = await helpers.updateFlashcard(
     existingFlashcard.id,
-    updateData,
+    updateData
   );
 
   revalidatePath("/manage");

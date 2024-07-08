@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -13,12 +13,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   FlashcardColumn,
   generateFlashcardsColumns,
-} from './flashcards-columns';
-import { type Category } from '@prisma/client';
+} from "./flashcards-columns";
+import { type Category } from "@prisma/client";
 
 export function FlashcardsDataTable({
   categories,
@@ -36,7 +36,7 @@ export function FlashcardsDataTable({
   });
 
   return (
-    <div className='rounded-md border'>
+    <div className="rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -61,7 +61,7 @@ export function FlashcardsDataTable({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -72,7 +72,7 @@ export function FlashcardsDataTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center'>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>

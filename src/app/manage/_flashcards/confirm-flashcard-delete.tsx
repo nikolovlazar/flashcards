@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   AlertDialog,
@@ -10,12 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { useState, type ReactNode } from 'react';
-import { FlashcardColumn } from './flashcards-columns';
-import { toast } from 'sonner';
-import { deleteFlashcard } from '../actions';
-import { HiddenInput } from '@/components/ui/hidden-input';
+} from "@/components/ui/alert-dialog";
+import { useState, type ReactNode } from "react";
+import { FlashcardColumn } from "./flashcards-columns";
+import { toast } from "sonner";
+import { deleteFlashcard } from "../actions";
+import { HiddenInput } from "@/components/ui/hidden-input";
 
 export default function ConfirmDelete({
   flashcard,
@@ -33,7 +33,7 @@ export default function ConfirmDelete({
     if (res.error) {
       toast.error(res.error);
     } else {
-      toast.success('Flashcard deleted');
+      toast.success("Flashcard deleted");
       setOpen(false);
     }
   };
@@ -53,12 +53,12 @@ export default function ConfirmDelete({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <form onSubmit={handleSubmit}>
-          <HiddenInput name='id' value={`${flashcard.id}`} />
+          <HiddenInput name="id" value={`${flashcard.id}`} />
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              type='submit'
-              className='bg-destructive hover:bg-destructive/80'
+              type="submit"
+              className="bg-destructive hover:bg-destructive/80"
             >
               Delete
             </AlertDialogAction>

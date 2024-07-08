@@ -1,9 +1,9 @@
-import prisma from '@/prisma';
-import { CategoriesDataTable } from './_categories/categories-data-table';
-import { FlashcardsDataTable } from './_flashcards/flashcards-data-table';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import CreateCategory from './_categories/create-category-dialog';
-import CreateFlashcard from './_flashcards/create-flashcard-dialog';
+import prisma from "@/prisma";
+import { CategoriesDataTable } from "./_categories/categories-data-table";
+import { FlashcardsDataTable } from "./_flashcards/flashcards-data-table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import CreateCategory from "./_categories/create-category-dialog";
+import CreateFlashcard from "./_flashcards/create-flashcard-dialog";
 
 export default async function Manage() {
   const categories = await prisma.category.findMany();
@@ -12,10 +12,10 @@ export default async function Manage() {
   });
 
   return (
-    <div className='flex flex-col lg:flex-row gap-6'>
+    <div className="flex flex-col lg:flex-row gap-6">
       <Card>
-        <CardHeader className='flex flex-row justify-between items-center'>
-          <span className='font-bold text-3xl'>Categories</span>
+        <CardHeader className="flex flex-row justify-between items-center">
+          <span className="font-bold text-3xl">Categories</span>
           <CreateCategory />
         </CardHeader>
         <CardContent>
@@ -23,8 +23,8 @@ export default async function Manage() {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader className='flex flex-row justify-between items-center'>
-          <span className='font-bold text-3xl'>Flashcards</span>
+        <CardHeader className="flex flex-row justify-between items-center">
+          <span className="font-bold text-3xl">Flashcards</span>
           <CreateFlashcard categories={categories} />
         </CardHeader>
         <CardContent>
