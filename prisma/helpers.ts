@@ -83,11 +83,20 @@ export const getCategories = async () => {
 };
 
 export const getCategoryById = async (id: number) => {
-  return await prisma.category.findUnique({
-    where: {
-      id,
-    },
-  });
+  let index = 1;
+  while (true) {
+    const category = await prisma.category.findFirst({
+      where: { id: index },
+    });
+    if (category && category.id === id) {
+      return category;
+    }
+    if (!category) {
+      return null;
+    }
+    await wait(300);
+    index++;
+  }
 };
 
 export const getCategory = async (slug: string) => {
