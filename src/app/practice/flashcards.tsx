@@ -33,23 +33,19 @@ export default function Flashcards({ category }: { category: Category }) {
 
   const displayedFlashcards = useMemo(
     () => shuffleArray(flashcards),
-    [flashcards]
+    [flashcards],
   );
-  const [answerShown, setAnswerShown] = useState(false);
   const [step, setStep] = useState(0);
 
   const nextStep = () => {
     if (step === displayedFlashcards.length - 1) {
-      setAnswerShown(false);
       setStep(0);
       return;
     }
-    setAnswerShown(false);
     setStep((s) => s + 1);
   };
 
   useEffect(() => {
-    setAnswerShown(false);
     setStep(0);
   }, [category]);
 
@@ -59,16 +55,11 @@ export default function Flashcards({ category }: { category: Category }) {
         <CardTitle>{displayedFlashcards[step].question}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Accordion
-          value={answerShown ? displayedFlashcards[step].slug : undefined}
-          onValueChange={(value) => setAnswerShown(!!value)}
-          type="single"
-          collapsible
-        >
+        <Accordion type="single" collapsible>
           <AccordionItem value={displayedFlashcards[step].slug}>
             <AccordionTrigger>Reveal answser</AccordionTrigger>
             <AccordionContent>
-              {answerShown && displayedFlashcards[step].answer}
+              {displayedFlashcards[step].answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -77,12 +68,7 @@ export default function Flashcards({ category }: { category: Category }) {
         <div>
           {step + 1} / {displayedFlashcards.length}
         </div>
-        <Button
-          onClick={nextStep}
-          disabled={!answerShown}
-          variant="outline"
-          size="icon"
-        >
+        <Button onClick={nextStep} variant="outline" size="icon">
           {step === displayedFlashcards.length - 1 ? (
             <RotateCcw />
           ) : (
