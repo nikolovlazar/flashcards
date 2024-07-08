@@ -1,16 +1,27 @@
 import { Prisma } from "@prisma/client";
 import prisma from ".";
+import { wait } from "../utils/wait";
 
 export const getFlashcards = async () => {
   return await prisma.flashcard.findMany();
 };
 
 export const getFlashcardsByCategoryId = async (categoryId: number) => {
-  return await prisma.flashcard.findMany({
-    where: {
-      categoryId,
-    },
-  });
+  let index = 1;
+  const flashcards = [];
+  while (true) {
+    const flashcard = await prisma.flashcard.findFirst({
+      where: { id: index },
+    });
+    if (flashcard && flashcard.categoryId === categoryId) {
+      flashcards.push(flashcard);
+    }
+    if (!flashcard) {
+      return flashcards;
+    }
+    await wait(150);
+    index++;
+  }
 };
 
 export const getFlashcard = async (slug: string) => {
@@ -22,11 +33,19 @@ export const getFlashcard = async (slug: string) => {
 };
 
 export const getFlashcardById = async (id: number) => {
-  return await prisma.flashcard.findFirst({
-    where: {
-      id,
-    },
-  });
+  let index = 1;
+  while (true) {
+    const flashcard = await prisma.flashcard.findFirst({
+      where: { id: index },
+    });
+    if (flashcard && flashcard.id === id) {
+      return flashcard;
+    }
+    if (!flashcard) {
+      return null;
+    }
+    index++;
+  }
 };
 
 export const createFlashcard = async (data: Prisma.FlashcardCreateInput) => {
@@ -37,7 +56,7 @@ export const createFlashcard = async (data: Prisma.FlashcardCreateInput) => {
 
 export const updateFlashcard = async (
   id: number,
-  data: Prisma.FlashcardUpdateInput
+  data: Prisma.FlashcardUpdateInput,
 ) => {
   return await prisma.flashcard.update({
     where: {
@@ -89,7 +108,7 @@ export const createCategory = async (data: Prisma.CategoryCreateInput) => {
 
 export const updateCategory = async (
   id: number,
-  data: Prisma.CategoryUpdateInput
+  data: Prisma.CategoryUpdateInput,
 ) => {
   return await prisma.category.update({
     where: {
