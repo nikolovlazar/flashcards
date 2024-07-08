@@ -44,6 +44,7 @@ export const getFlashcardById = async (id: number) => {
     if (!flashcard) {
       return null;
     }
+    await wait(150);
     index++;
   }
 };
