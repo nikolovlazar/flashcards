@@ -57,7 +57,7 @@ export default function Flashcards({ category }: { category: Category }) {
       <CardContent>
         <Accordion type="single" collapsible>
           <AccordionItem value={displayedFlashcards[step].slug}>
-            <AccordionTrigger>Reveal answser</AccordionTrigger>
+            <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
               {displayedFlashcards[step].answer}
             </AccordionContent>
