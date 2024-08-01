@@ -18,7 +18,7 @@ import { type ReactNode, useState } from "react";
 import type { FlashcardColumn } from "./flashcards-columns";
 import { HiddenInput } from "@/components/ui/hidden-input";
 import { toast } from "sonner";
-import { updateFlashcard } from "../actions";
+import { useRouter } from "next/navigation";
 
 export default function EditFlashcard({
   flashcard,
@@ -30,21 +30,27 @@ export default function EditFlashcard({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const res = await updateFlashcard(formData);
-    if (res.error) {
-      toast.error(res.error);
-    } else {
+    const res = await fetch(`/api/flashcards/${flashcard.id}`, {
+      method: "POST",
+      body: formData,
+    });
+    if (res.ok) {
       toast.success("Flashcard updated");
       setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
     }
   };
 
   const [selectedCategory, setSelectedCategory] = useState<Category>(
-    flashcard.category
+    flashcard.category,
   );
   return (
     <Dialog open={open} onOpenChange={setOpen}>

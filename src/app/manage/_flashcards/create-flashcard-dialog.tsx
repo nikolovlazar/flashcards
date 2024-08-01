@@ -17,7 +17,7 @@ import type { Category } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { createFlashcard } from "../actions";
+import { useRouter } from "next/navigation";
 
 export default function CreateFlashcard({
   categories,
@@ -25,21 +25,28 @@ export default function CreateFlashcard({
   categories: Category[];
 }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const res = await createFlashcard(formData);
-    if (res.error) {
-      toast.error(res.error);
-    } else {
+    const res = await fetch("/api/flashcards", {
+      method: "PUT",
+      body: formData,
+    });
+
+    if (res.ok) {
       toast.success("Flashcard created");
       setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
     }
   };
 
   const [selectedCategory, setSelectedCategory] = useState<Category>(
-    categories[0]
+    categories[0],
   );
   return (
     <Dialog open={open} onOpenChange={setOpen}>

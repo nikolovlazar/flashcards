@@ -12,23 +12,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
-import { createCategory } from "../actions";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function CreateCategory() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const res = await createCategory(formData);
-    if (res?.error) {
-      toast.error(res.error);
-    } else {
-      toast.success("Category created");
-      setOpen(false);
-    }
+    await fetch("/api/categories", {
+      method: "PUT",
+      body: formData,
+    });
+
+    toast.success("Category created");
+    setOpen(false);
+    router.refresh();
   };
 
   return (
@@ -45,7 +47,7 @@ export default function CreateCategory() {
         <form onSubmit={handleSubmit} id="create-category" className="">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" placeholder="JavaScript" required />
+            <Input id="name" name="name" placeholder="JavaScript" />
           </div>
         </form>
         <DialogFooter>
