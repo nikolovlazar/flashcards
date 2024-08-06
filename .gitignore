@@ -53,3 +53,6 @@ next.config.original.js
 prisma/dev.db
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Sentry Config File
+.env.sentry-build-plugin

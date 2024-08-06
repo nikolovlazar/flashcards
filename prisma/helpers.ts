@@ -3,7 +3,7 @@ import prisma from ".";
 import { wait } from "../utils/wait";
 
 export const getFlashcards = async () => {
-  return await prisma.flashcard.findMany();
+  return await prisma.flashcard.findMany({ orderBy: { id: "asc" } });
 };
 
 export const getFlashcardsByCategoryId = async (categoryId: number) => {
@@ -19,7 +19,7 @@ export const getFlashcardsByCategoryId = async (categoryId: number) => {
     if (!flashcard) {
       return flashcards;
     }
-    await wait(300);
+    await wait(30);
     index++;
   }
 };
