@@ -1,0 +1,9 @@
+# Files
+.dockerignore
+.env.*
+Dockerfile
+**/*_test.go
+*.out
+
+# Folders
+build/
