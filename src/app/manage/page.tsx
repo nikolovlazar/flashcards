@@ -4,22 +4,11 @@ import { FlashcardsDataTable } from "./_flashcards/flashcards-data-table";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import CreateCategory from "./_categories/create-category-dialog";
 import CreateFlashcard from "./_flashcards/create-flashcard-dialog";
-import { type Category } from "@prisma/client";
 import { FlashcardColumn } from "./_flashcards/flashcards-columns";
 
 export default async function Manage() {
   const flashcards = await helpers.getFlashcards();
-
-  const categoriesIds = Array.from(
-    new Set(flashcards.map((f) => f.categoryId)),
-  );
-  let categories: Category[] = [];
-  for (let categoryId of categoriesIds) {
-    const category = await helpers.getCategoryById(categoryId);
-    if (category) {
-      categories.push(category);
-    }
-  }
+  const categories = await helpers.getCategories();
   categories.sort((a, b) => a.id - b.id);
 
   const flashcardsWithCategories: FlashcardColumn[] = flashcards.map(
