@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:16
+    container_name: db
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=flashcards
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    container_name: api
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./packages/api:/app
+    environment:
+      - PORT=3001
+      - DATABASE_URL=postgres://postgres:password@db:5432/flashcards
+    command: reflex -r '\.go' -s -- sh -c "go run main.go"
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # web:
+  #   build:
+  #     context: ./packages/web
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./packages/web:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - PORT=3000
+  #     - DATABASE_URL=postgres://postgres:password@db:5432/flashcards
+  #   command: npm run dev
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:

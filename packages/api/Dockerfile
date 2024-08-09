@@ -1,29 +1,14 @@
-# Stage 1: Build the Go binary
-FROM golang:1.21.4 as builder
+FROM golang:1.22.6-alpine as builder
 
-WORKDIR /build
+WORKDIR /app
 
-# Copy the Go modules files
-COPY go.mod go.sum ./
-RUN go mod download
+# Install reflex
+RUN go install github.com/cespare/reflex@latest
 
 # Copy the source code
 COPY . .
 
-# Build the Go binary
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
-RUN go build -ldflags="-s -w" -o apiserver .
+# Install dependencies
+RUN go mod download
 
-# Stage 2: Create a small image to run the Go binary
-FROM scratch
-
-WORKDIR /app
-
-# Copy the built binary from the builder stage
-COPY --from=builder ["/build/apiserver", "/"]
-
-# Expose the port
-EXPOSE 3001
-
-# Run the binary
-ENTRYPOINT ["/apiserver"]
+CMD ["reflex", "-r", "\\.go$", "-s", "--", "go", "run", "main.go"]

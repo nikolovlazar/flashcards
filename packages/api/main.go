@@ -1,17 +1,27 @@
 package main
 
 import (
+	"api/database"
+	"api/routes"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
+	database.ConnectDB()
+
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	routes.RegisterCategoriesRoutes(app)
+	routes.RegisterFlashcardsRoutes(app)
 
-	log.Fatal(app.Listen(":3001"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3001"
+	}
+
+	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
 }
