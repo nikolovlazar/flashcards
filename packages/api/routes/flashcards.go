@@ -11,9 +11,22 @@ import (
 func RegisterFlashcardsRoutes(app *fiber.App) {
 	api := app.Group("/flashcards")
 
+	api.Get("/", getFlashcards)
 	api.Put("/", createFlashcard)
 	api.Post("/:id", updateFlashcard)
 	api.Delete("/:id", deleteFlashcard)
+}
+
+func getFlashcards(c *fiber.Ctx) error {
+	var flashcards []models.Flashcard
+
+	result := database.DB.Find(&flashcards)
+
+	if result.Error != nil {
+		return c.Status(500).SendString("Cannot retrieve categories: " + result.Error.Error())
+	}
+
+	return c.Status(200).JSON(flashcards)
 }
 
 func createFlashcard(c *fiber.Ctx) error {
