@@ -37,22 +37,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Sentry
-.sentryclirc
-
-# Sentry
-.sentryclirc
-
-# Sentry
 next.config.original.js
-
-# Sentry Config File
-.sentryclirc
-
 
 # Prisma generated DB
 prisma/dev.db
-# Sentry Config File
-.env.sentry-build-plugin
-
-# Sentry Config File
-.env.sentry-build-plugin
