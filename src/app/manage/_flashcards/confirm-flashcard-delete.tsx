@@ -2,7 +2,6 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -14,8 +13,9 @@ import {
 import { useState, type ReactNode } from "react";
 import { FlashcardColumn } from "./flashcards-columns";
 import { toast } from "sonner";
-import { deleteFlashcard } from "../actions";
-import { HiddenInput } from "@/components/ui/hidden-input";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 export default function ConfirmDelete({
   flashcard,
@@ -25,17 +25,23 @@ export default function ConfirmDelete({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const res = await deleteFlashcard(formData);
-    if (res.error) {
-      toast.error(res.error);
-    } else {
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    const res = await fetch(`/api/flashcards/${flashcard.id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
       toast.success("Flashcard deleted");
       setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
     }
+    setIsDeleting(false);
   };
 
   return (
@@ -52,18 +58,16 @@ export default function ConfirmDelete({
             flashcard.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <form onSubmit={handleSubmit}>
-          <HiddenInput name="id" value={`${flashcard.id}`} />
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              type="submit"
-              className="bg-destructive hover:bg-destructive/80"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </form>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <Button
+            disabled={isDeleting}
+            onClick={handleDelete}
+            className="bg-destructive hover:bg-destructive/80"
+          >
+            {isDeleting ? <Loader className="animate-spin" /> : "Delete"}
+          </Button>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

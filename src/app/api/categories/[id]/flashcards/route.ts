@@ -1,5 +1,6 @@
 import * as helpers from "@/prisma/helpers";
 
+// Get flashcards for category
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const categoryId = parseInt(params.id, 10);
   const category = await helpers.getCategoryById(categoryId);
@@ -9,7 +10,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       {
         error: "Category not found",
       },
-      { status: 404 }
+      { status: 404 },
     );
   }
 

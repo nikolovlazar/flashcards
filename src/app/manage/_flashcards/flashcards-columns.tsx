@@ -18,7 +18,7 @@ export type FlashcardColumn = Omit<Flashcard, "categoryId"> & {
 };
 
 export const generateFlashcardsColumns: (
-  categories: Category[]
+  categories: Category[],
 ) => ColumnDef<FlashcardColumn>[] = (categories) => [
   {
     accessorKey: "id",

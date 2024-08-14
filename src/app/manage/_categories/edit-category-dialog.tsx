@@ -12,10 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Category } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { updateCategory } from "../actions";
 import { toast } from "sonner";
-import { HiddenInput } from "@/components/ui/hidden-input";
 
 export default function EditCategory({
   category,
@@ -25,16 +24,23 @@ export default function EditCategory({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const res = await updateCategory(formData);
-    if (res.error) {
-      toast.error(res.error);
-    } else {
+    const res = await fetch(`/api/categories/${category.id}`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (res.ok) {
       toast.success("Category updated");
       setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
     }
   };
 
@@ -45,8 +51,7 @@ export default function EditCategory({
         <DialogHeader>
           <DialogTitle>Edit {category.name}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} id="create-category" className="">
-          <HiddenInput name="id" value={`${category.id}`} />
+        <form onSubmit={handleSubmit} id="create-category">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -58,7 +63,9 @@ export default function EditCategory({
           </div>
         </form>
         <DialogFooter>
-          <Button>Update</Button>
+          <Button form="create-category" type="submit">
+            Update
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

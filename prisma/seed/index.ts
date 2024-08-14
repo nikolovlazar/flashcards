@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-import { categories } from "./data/categories";
-import { flashcards } from "./data/flashcards";
+import { flashcards, categories } from "./data";
 
 const prisma = new PrismaClient();
 
