@@ -6,6 +6,7 @@ require github.com/gofiber/fiber/v2 v2.52.5
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/brianvoe/gofakeit/v7 v7.0.4 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/gosimple/slug v1.14.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect

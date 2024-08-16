@@ -1,8 +1,9 @@
 package main
 
 import (
-	"api/database"
-	"api/routes"
+	"api/cmd/routes"
+	"api/internal/database"
+	"api/scripts/seed"
 	"fmt"
 	"log"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 func main() {
 	database.ConnectDB()
+	seed.Seed()
 
 	app := fiber.New()
 

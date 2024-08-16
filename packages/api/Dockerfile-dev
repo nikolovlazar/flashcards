@@ -11,4 +11,4 @@ COPY . .
 # Install dependencies
 RUN go mod download
 
-CMD ["reflex", "-r", "\\.go$", "-s", "--", "go", "run", "main.go"]
+CMD ["reflex", "-r", "\\.go$", "-s", "--", "go", "run", "cmd/main.go"]

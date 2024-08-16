@@ -1,7 +1,7 @@
 package database
 
 import (
-	"api/models"
+	"api/internal/models"
 	"log"
 
 	"gorm.io/driver/postgres"

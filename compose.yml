@@ -23,7 +23,7 @@ services:
     container_name: api
     build:
       context: ./packages/api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
     ports:
       - "3001:3001"
     volumes:
@@ -31,7 +31,7 @@ services:
     environment:
       - PORT=3001
       - DATABASE_URL=postgres://postgres:password@db:5432/flashcards
-    command: reflex -r '\.go' -s -- sh -c "go run main.go"
+    command: reflex -r '\.go' -s -- sh -c "go run cmd/main.go"
     networks:
       - app-network
     depends_on:
@@ -41,7 +41,7 @@ services:
   # web:
   #   build:
   #     context: ./packages/web
-  #     dockerfile: Dockerfile
+  #     dockerfile: Dockerfile-dev
   #   ports:
   #     - "3000:3000"
   #   volumes:
