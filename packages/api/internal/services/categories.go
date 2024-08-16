@@ -38,7 +38,7 @@ func CreateCategory(input struct {
 		Slug: slug,
 	}
 
-	database.DB.Create(newCategory)
+	database.DB.Create(&newCategory)
 
 	return &newCategory, nil
 }
