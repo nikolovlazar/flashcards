@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -9,20 +9,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Category } from "@prisma/client";
-import { Loader2, Play } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+import { Category } from "@/lib/models";
+import { Loader2, Play } from "lucide-react";
+import { Suspense, useState } from "react";
 import Flashcards from "./flashcards";
 
 export default function Practice({ categories }: { categories: Category[] }) {
   const [selectedCategory, setSelectedCategory] = useState<Category>(
-    categories[0]
+    categories[0],
   );
   const [sessionStarted, setSessionStarted] = useState(false);
 

@@ -3,15 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && npm run seed && next dev",
-    "build": "prisma generate && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "seed": "prisma db push && prisma db seed"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^5.18.0",
-    "@prisma/client": "^5.4.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -31,32 +28,24 @@
     "lucide-react": "^0.394.0",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
-    "pg": "^8.12.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "slugify": "^1.6.6",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@tanstack/eslint-plugin-query": "^5.43.1",
     "@types/color": "^3.0.6",
     "@types/node": "20.14.2",
-    "@types/pg": "^8.11.6",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8.4.38",
-    "prisma": "^5.15.0",
     "tailwindcss": "^3.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed/index.ts"
   }
 }

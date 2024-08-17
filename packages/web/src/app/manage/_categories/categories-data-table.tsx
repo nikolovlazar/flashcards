@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type Category } from "@prisma/client";
+import { type Category } from "@/lib/models";
 import { categoriesColumns } from "./categories-columns";
 
 export function CategoriesDataTable({
@@ -41,7 +41,7 @@ export function CategoriesDataTable({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 );

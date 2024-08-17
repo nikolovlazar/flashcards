@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import type { Category } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +11,11 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import EditCategory from "./edit-category-dialog";
 import ConfirmDelete from "./confirm-category-delete";
+import { Category } from "@/lib/models";
 
 export const categoriesColumns: ColumnDef<Category>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "ID",
     header: "ID",
   },
   {

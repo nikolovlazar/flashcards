@@ -1,30 +1,17 @@
-import * as helpers from "@/prisma/helpers";
-import slugify from "slugify";
-
 // Create Category
 export async function PUT(request: Request) {
   const formData = await request.formData();
 
-  const data = {
-    name: formData.get("name")!.toString(),
-  };
-
-  if (data.name.length < 5) {
-    return new Response("Name must be at least 5 characters", { status: 400 });
-  }
-
-  const slug = slugify(data.name, { lower: true });
-
-  const existingCategory = await helpers.getCategory(slug);
-
-  if (existingCategory) {
-    return new Response("Category already exists", { status: 400 });
-  }
-
-  const category = await helpers.createCategory({
-    name: data.name,
-    slug,
+  const res = await fetch("http://api:3001/categories", {
+    body: formData,
+    method: "PUT",
   });
 
+  if (!res.ok) {
+    const error = await res.text();
+    return new Response(error, { status: res.status });
+  }
+
+  const category = await res.json();
   return Response.json(category, { status: 201 });
 }

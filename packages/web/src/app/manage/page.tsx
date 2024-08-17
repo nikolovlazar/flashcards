@@ -1,19 +1,37 @@
-import * as helpers from "@/prisma/helpers";
 import { CategoriesDataTable } from "./_categories/categories-data-table";
 import { FlashcardsDataTable } from "./_flashcards/flashcards-data-table";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import CreateCategory from "./_categories/create-category-dialog";
 import CreateFlashcard from "./_flashcards/create-flashcard-dialog";
 import { FlashcardColumn } from "./_flashcards/flashcards-columns";
+import { Category, Flashcard } from "@/lib/models";
+
+const getData = async () => {
+  const categoriesRes = await fetch("http://api:3001/categories");
+  if (!categoriesRes.ok) {
+    const error = await categoriesRes.text();
+    throw new Error(error);
+  }
+  const categories = (await categoriesRes.json()) as Category[];
+
+  const flashcardsRes = await fetch("http://api:3001/flashcards");
+  if (!flashcardsRes.ok) {
+    const error = await flashcardsRes.text();
+    throw new Error(error);
+  }
+  const flashcards = (await flashcardsRes.json()) as Flashcard[];
+
+  return { categories, flashcards };
+};
 
 export default async function Manage() {
-  const flashcards = await helpers.getFlashcards();
-  const categories = await helpers.getCategories();
-  categories.sort((a, b) => a.id - b.id);
+  const { categories, flashcards } = await getData();
+
+  categories.sort((a, b) => a.ID - b.ID);
 
   const flashcardsWithCategories: FlashcardColumn[] = flashcards.map(
     (flashcard) => {
-      const category = categories.find((c) => c.id === flashcard.categoryId)!;
+      const category = categories.find((c) => c.ID === flashcard.categoryId)!;
       return {
         ...flashcard,
         category,

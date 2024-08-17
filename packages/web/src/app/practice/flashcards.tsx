@@ -1,6 +1,5 @@
 "use client";
 
-import { Category, Flashcard } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import { shuffleArray } from "../../../utils/array";
 import {
@@ -19,17 +18,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowBigRight, RotateCcw } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Category, Flashcard } from "@/lib/models";
 
 export default function Flashcards({ category }: { category: Category }) {
   const { data } = useSuspenseQuery({
     queryKey: [`${category.slug}-flashcards`],
     queryFn: async () => {
-      const response = await fetch(`/api/categories/${category.id}/flashcards`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${category.ID}/flashcards`,
+      );
       return await response.json();
     },
   });
 
-  const flashcards = data.flashcards as Flashcard[];
+  const flashcards = data as Flashcard[];
 
   const displayedFlashcards = useMemo(
     () => shuffleArray(flashcards),

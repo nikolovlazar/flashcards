@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import type { Flashcard, Category } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import EditFlashcard from "./edit-flashcard-dialog";
 import ConfirmDelete from "./confirm-flashcard-delete";
+import { Flashcard, Category } from "@/lib/models";
 
 export type FlashcardColumn = Omit<Flashcard, "categoryId"> & {
   category: Category;
@@ -21,7 +21,7 @@ export const generateFlashcardsColumns: (
   categories: Category[],
 ) => ColumnDef<FlashcardColumn>[] = (categories) => [
   {
-    accessorKey: "id",
+    accessorKey: "ID",
     header: "ID",
   },
   {

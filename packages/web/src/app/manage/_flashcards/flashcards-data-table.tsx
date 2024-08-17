@@ -18,7 +18,7 @@ import {
   FlashcardColumn,
   generateFlashcardsColumns,
 } from "./flashcards-columns";
-import { type Category } from "@prisma/client";
+import { type Category } from "@/lib/models";
 
 export function FlashcardsDataTable({
   categories,
