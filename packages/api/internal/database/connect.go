@@ -22,8 +22,11 @@ func ConnectDB() {
 
 	log.Println("✅ connected to postgresql!")
 	db.Logger = logger.Default.LogMode(logger.Info)
-	log.Println("🔄 running migrations...")
-	db.AutoMigrate(&models.Category{}, &models.Flashcard{})
 
 	DB = db
+}
+
+func AutoMigrate() {
+	log.Println("🔄 running migrations...")
+	DB.AutoMigrate(&models.Category{}, &models.Flashcard{})
 }
