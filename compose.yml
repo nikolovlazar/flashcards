@@ -28,9 +28,6 @@ services:
       - "3001:3001"
     volumes:
       - ./packages/api:/app
-    environment:
-      - PORT=3001
-      - DATABASE_URL=postgres://postgres:password@db:5432/flashcards
     command: reflex -r '\.go' -s -- sh -c "go run cmd/main.go"
     networks:
       - app-network
@@ -38,24 +35,24 @@ services:
       db:
         condition: service_healthy
 
-  # web:
-  #   build:
-  #     context: ./packages/web
-  #     dockerfile: Dockerfile-dev
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./packages/web:/app
-  #     - /app/node_modules
-  #   environment:
-  #     - PORT=3000
-  #     - DATABASE_URL=postgres://postgres:password@db:5432/flashcards
-  #   command: npm run dev
-  #   networks:
-  #     - app-network
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  web:
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/web:/app
+      - /app/node_modules
+    environment:
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    command: npm run dev
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
 
 networks:
   app-network:
