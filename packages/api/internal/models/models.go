@@ -4,9 +4,8 @@ import "gorm.io/gorm"
 
 type Category struct {
 	gorm.Model
-	Name       string      `json:"name"`
-	Slug       string      `json:"slug" gorm:"->;<-:create"`
-	Flashcards []Flashcard `gorm:"foreignKey:CategoryID"`
+	Name string `json:"name"`
+	Slug string `json:"slug" gorm:"->;<-:create"`
 }
 
 type Flashcard struct {
