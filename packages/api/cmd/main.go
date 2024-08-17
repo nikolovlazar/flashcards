@@ -3,6 +3,7 @@ package main
 import (
 	"api/cmd/routes"
 	"api/internal/database"
+	"api/internal/models"
 	"api/scripts/seed"
 	"fmt"
 	"log"
@@ -19,6 +20,12 @@ func main() {
 
 	routes.RegisterCategoriesRoutes(app)
 	routes.RegisterFlashcardsRoutes(app)
+
+	app.Get("/wipe-db", func(c *fiber.Ctx) error {
+		database.DB.Migrator().DropTable(&models.Category{})
+		database.DB.Migrator().DropTable(&models.Flashcard{})
+		return c.Status(200).SendString("DB wiped!")
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
