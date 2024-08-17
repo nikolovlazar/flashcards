@@ -8,6 +8,18 @@ import (
 	"github.com/gosimple/slug"
 )
 
+func GetCategory(categoryId string) (*models.Category, error) {
+	var category models.Category
+
+	result := database.DB.First(&category, categoryId)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &category, nil
+}
+
 func GetCategories() ([]models.Category, error) {
 	var categories []models.Category
 
