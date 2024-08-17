@@ -14,7 +14,11 @@ import (
 
 func main() {
 	database.ConnectDB()
-	seed.Seed()
+	tables, err := database.DB.Migrator().GetTables()
+	database.AutoMigrate()
+	if err != nil || len(tables) == 0 {
+		seed.Seed()
+	}
 
 	app := fiber.New()
 
