@@ -12,6 +12,7 @@ func RegisterCategoriesRoutes(app *fiber.App) {
 
 	api.Get("/", getCategories)
 	api.Put("/", createCategory)
+	api.Get("/:id", getCategory)
 	api.Post("/:id", updateCategory)
 	api.Delete("/:id", deleteCategory)
 	api.Get("/:id/flashcards", getFlashcardsForCategory)
@@ -46,6 +47,18 @@ func createCategory(c *fiber.Ctx) error {
 	}
 
 	return c.Status(201).JSON(newCategory)
+}
+
+func getCategory(c *fiber.Ctx) error {
+	categoryId := c.Params("id")
+
+	category, error := services.GetCategory(categoryId)
+
+	if error != nil {
+		return c.Status(500).SendString("Cannot retrieve category: " + error.Error())
+	}
+
+	return c.Status(200).JSON(category)
 }
 
 func updateCategory(c *fiber.Ctx) error {
