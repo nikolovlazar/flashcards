@@ -14,7 +14,7 @@ func Seed() {
 	log.Println("🌱 seeding database...")
 
 	log.Println("🔄 creating categories...")
-	categories := make([]models.Category, 40)
+	categories := make([]models.Category, 0, 40)
 	for range make([]uint8, 40) {
 		name := gofakeit.Company()
 		category := models.Category{
@@ -26,7 +26,7 @@ func Seed() {
 	database.DB.Create(&categories)
 
 	log.Println("🔄 creating flashcards...")
-	flashcards := make([]models.Flashcard, 250)
+	flashcards := make([]models.Flashcard, 0, 250)
 	for range make([]uint8, 250) {
 		question := gofakeit.ProductName()
 		flashcard := models.Flashcard{
