@@ -4,6 +4,8 @@ import (
 	"api/internal/database"
 	errs "api/internal/errors"
 	"api/internal/models"
+	"strconv"
+	"time"
 
 	"github.com/gosimple/slug"
 )
@@ -102,18 +104,31 @@ func DeleteCategory(categoryId string) (bool, error) {
 }
 
 func GetFlashcardsForCategory(categoryId string) ([]models.Flashcard, error) {
+	catId, _ := strconv.ParseUint(categoryId, 10, 32)
+
 	var existingCategory models.Category
-	existingResult := database.DB.First(&existingCategory, categoryId)
+	existingResult := database.DB.First(&existingCategory, catId)
 
 	if existingResult.Error != nil {
 		return nil, &errs.NotFoundError{Resource: "category"}
 	}
 
-	var flashcards []models.Flashcard
-	findResult := database.DB.Where("category_id = ?", categoryId).Find(&flashcards)
+	flashcards := []models.Flashcard{}
 
-	if findResult.Error != nil {
-		return nil, &errs.OperationError{Operation: "retrieve", Resource: "category"}
+	i := 1
+	for {
+		var flashcard models.Flashcard
+		result := database.DB.First(&flashcard, i)
+
+		if result.Error != nil {
+			break
+		}
+
+		if flashcard.CategoryID == uint(catId) {
+			flashcards = append(flashcards, flashcard)
+		}
+		i++
+		time.Sleep(time.Duration(10) * time.Millisecond)
 	}
 
 	return flashcards, nil
