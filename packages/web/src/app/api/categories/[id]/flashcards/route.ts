@@ -1,8 +1,16 @@
+import { startSpan } from "@sentry/nextjs";
+
 // Get flashcards for category
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const categoryId = parseInt(params.id, 10);
 
-  const categoryRes = await fetch(`http://api:3001/categories/${categoryId}`);
+  const categoryRes = await startSpan(
+    {
+      name: "Fetch category details",
+      op: "http",
+    },
+    () => fetch(`http://api:3001/categories/${categoryId}`),
+  );
 
   if (!categoryRes.ok) {
     const error = await categoryRes.text();
@@ -10,8 +18,12 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
   const category = await categoryRes.json();
 
-  const flashcardsRes = await fetch(
-    `http://api:3001/categories/${categoryId}/flashcards`,
+  const flashcardsRes = await startSpan(
+    {
+      name: "Fetch flashcards for category",
+      op: "http",
+    },
+    () => fetch(`http://api:3001/categories/${categoryId}/flashcards`),
   );
 
   if (!flashcardsRes.ok) {

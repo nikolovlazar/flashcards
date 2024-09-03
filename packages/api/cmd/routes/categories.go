@@ -4,6 +4,7 @@ import (
 	errs "api/internal/errors"
 	"api/internal/services"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -108,6 +109,7 @@ func getFlashcardsForCategory(c *fiber.Ctx) error {
 
 	flashcards, err := services.GetFlashcardsForCategory(categoryId)
 	if err != nil {
+		sentry.CaptureException(err)
 		switch e := err.(type) {
 		case *errs.NotFoundError:
 			return c.Status(404).SendString(e.Error())

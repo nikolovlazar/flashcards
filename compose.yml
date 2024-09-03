@@ -36,6 +36,7 @@ services:
         condition: service_healthy
 
   web:
+    container_name: web
     build:
       context: ./packages/web
       dockerfile: Dockerfile-dev
