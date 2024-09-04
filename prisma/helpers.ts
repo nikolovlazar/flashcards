@@ -44,7 +44,7 @@ export const getFlashcardById = async (id: number) => {
     if (!flashcard) {
       return null;
     }
-    await wait(10);
+    await wait(20);
     index++;
   }
 };
@@ -83,9 +83,20 @@ export const getCategories = async () => {
 };
 
 export const getCategoryById = async (id: number) => {
-  return await prisma.category.findFirst({
-    where: { id },
-  });
+  let index = 0;
+  while (true) {
+    const category = await prisma.category.findFirst({
+      where: { id: index },
+    });
+    if (category && category.id === id) {
+      return category;
+    }
+    if (!category) {
+      return null;
+    }
+    await wait(20);
+    index++;
+  }
 };
 
 export const getCategory = async (slug: string) => {
