@@ -19,7 +19,7 @@ export const getFlashcardsByCategoryId = async (categoryId: number) => {
     if (!flashcard) {
       return flashcards;
     }
-    await wait(30);
+    await wait(20);
     index++;
   }
 };
