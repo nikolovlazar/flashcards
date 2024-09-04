@@ -6,6 +6,8 @@ import CreateCategory from "./_categories/create-category-dialog";
 import CreateFlashcard from "./_flashcards/create-flashcard-dialog";
 import { FlashcardColumn } from "./_flashcards/flashcards-columns";
 
+export const dynamic = "force-dynamic";
+
 export default async function Manage() {
   const flashcards = await helpers.getFlashcards();
   const categories = await helpers.getCategories();
