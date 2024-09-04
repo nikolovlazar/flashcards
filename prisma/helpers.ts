@@ -7,7 +7,7 @@ export const getFlashcards = async () => {
 };
 
 export const getFlashcardsByCategoryId = async (categoryId: number) => {
-  let index = 1;
+  let index = 0;
   const flashcards = [];
   while (true) {
     const flashcard = await prisma.flashcard.findFirst({
@@ -33,9 +33,20 @@ export const getFlashcard = async (slug: string) => {
 };
 
 export const getFlashcardById = async (id: number) => {
-  return await prisma.flashcard.findFirst({
-    where: { id },
-  });
+  let index = 0;
+  while (true) {
+    const flashcard = await prisma.flashcard.findFirst({
+      where: { id: index },
+    });
+    if (flashcard && flashcard.id === id) {
+      return flashcard;
+    }
+    if (!flashcard) {
+      return null;
+    }
+    await wait(10);
+    index++;
+  }
 };
 
 export const createFlashcard = async (data: Prisma.FlashcardCreateInput) => {
