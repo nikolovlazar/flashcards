@@ -1,5 +1,7 @@
 from typing import List
 
+import sentry_sdk
+
 from category.domain.entity import Category
 from category.infra.database.repository.rdb import CategoryRepository
 
@@ -11,7 +13,9 @@ class CategoryQuery:
         self.category_repository = category_repository
 
     def get_all_categories(self) -> List[Category]:
-        return self.category_repository.find_all()
+        with sentry_sdk.start_span(name="CategoryQuery:get_all_categories"):
+            return self.category_repository.find_all()
 
     def get_category(self, id: int) -> Category:
-        return self.category_repository.find_by_id(id)
+        with sentry_sdk.start_span(name="CategoryQuery:get_category"):
+            return self.category_repository.find_by_id(id)
