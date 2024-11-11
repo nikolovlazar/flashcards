@@ -2,7 +2,7 @@
 from django.db import models
 from django.utils.text import slugify
 
-from src.category.domain.exceptions import CategoryNameTooShort
+from category.domain.exceptions import CategoryNameTooShort
 
 
 class Category(models.Model):

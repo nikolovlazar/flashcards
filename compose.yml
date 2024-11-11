@@ -10,11 +10,11 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=flashcards
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,12 +25,19 @@ services:
       context: ./packages/api
       dockerfile: Dockerfile-dev
     ports:
-      - "3001:3001"
+      - '8000:8000'
     volumes:
       - ./packages/api:/app
-    command: reflex -r '\.go' -s -- sh -c "go run cmd/main.go"
     networks:
       - app-network
+    environment:
+      - SENTRY_DSN=https://6911a9fdc3d37038657636459208b56d@o4506044970565632.ingest.us.sentry.io/4508281601392645
+      - DB_NAME=flashcards
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=5432
+
     depends_on:
       db:
         condition: service_healthy
@@ -41,7 +48,7 @@ services:
       context: ./packages/web
       dockerfile: Dockerfile-dev
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./packages/web:/app
       - /app/node_modules
