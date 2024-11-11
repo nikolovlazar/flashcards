@@ -3,7 +3,7 @@ import Practice from './practice-session';
 export const dynamic = 'force-dynamic';
 
 const getCategories = async () => {
-  const res = await fetch('http://api:8000/categories');
+  const res = await fetch('http://api:8000/categories', { cache: 'no-store' });
   if (!res.ok) {
     const error = await res.text();
     throw new Error(error);
