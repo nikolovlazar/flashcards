@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -28,20 +29,27 @@ export default function EditCategory({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const res = await fetch(`/api/categories/${category.id}`, {
-      method: 'PATCH',
-      body: formData,
-    });
+    await Sentry.startSpan(
+      {
+        name: 'edit-category',
+      },
+      async () => {
+        const formData = new FormData(event.currentTarget);
+        const res = await fetch(`/api/categories/${category.id}`, {
+          method: 'PATCH',
+          body: formData,
+        });
 
-    if (res.ok) {
-      toast.success('Category updated');
-      setOpen(false);
-      router.refresh();
-    } else {
-      const message = await res.text();
-      toast.error(message);
-    }
+        if (res.ok) {
+          toast.success('Category updated');
+          setOpen(false);
+          router.refresh();
+        } else {
+          const message = await res.text();
+          toast.error(message);
+        }
+      }
+    );
   };
 
   return (

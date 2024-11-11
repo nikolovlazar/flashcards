@@ -25,9 +25,11 @@ export default function Flashcards({ category }: { category: Category }) {
     queryKey: [`${category.slug}-flashcards`],
     queryFn: async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories/${category.id}/flashcards`
+        `/api/categories/${category.id}/flashcards`,
+        { cache: 'no-store' }
       );
-      return await response.json();
+      const data = await response.json();
+      return data.flashcards;
     },
   });
 

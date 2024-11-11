@@ -8,7 +8,7 @@ const getCategories = async () => {
     const error = await res.text();
     throw new Error(error);
   }
-  return await res.json();
+  return (await res.json()).results.categories;
 };
 
 export default async function Manage() {

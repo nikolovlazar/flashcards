@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,14 +10,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { HiddenInput } from "@/components/ui/hidden-input";
-import type { Category } from "@prisma/client";
-import { Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, type ReactNode } from "react";
-import { toast } from "sonner";
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { HiddenInput } from '@/components/ui/hidden-input';
+import type { Category } from '@/lib/models';
+import { Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, type ReactNode } from 'react';
+import { toast } from 'sonner';
 
 export default function ConfirmDelete({
   category,
@@ -31,17 +32,24 @@ export default function ConfirmDelete({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    const res = await fetch(`/api/categories/${category.id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) {
-      toast.success("Category deleted");
-      setOpen(false);
-      router.refresh();
-    } else {
-      const message = await res.text();
-      toast.error(message);
-    }
+    await Sentry.startSpan(
+      {
+        name: 'delete-category',
+      },
+      async () => {
+        const res = await fetch(`/api/categories/${category.id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          toast.success('Category deleted');
+          setOpen(false);
+          router.refresh();
+        } else {
+          const message = await res.text();
+          toast.error(message);
+        }
+      }
+    );
     setIsDeleting(false);
   };
 
@@ -60,14 +68,14 @@ export default function ConfirmDelete({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <HiddenInput name="id" value={`${category.id}`} />
+          <HiddenInput name='id' value={`${category.id}`} />
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
             disabled={isDeleting}
             onClick={handleDelete}
-            className="bg-destructive hover:bg-destructive/80"
+            className='bg-destructive hover:bg-destructive/80'
           >
-            {isDeleting ? <Loader className="animate-spin" /> : "Delete"}
+            {isDeleting ? <Loader className='animate-spin' /> : 'Delete'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

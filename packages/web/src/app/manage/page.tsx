@@ -7,7 +7,9 @@ import { FlashcardColumn } from './_flashcards/flashcards-columns';
 import { Category, Flashcard } from '@/lib/models';
 
 const getData = async () => {
-  const categoriesRes = await fetch('http://api:8000/categories');
+  const categoriesRes = await fetch('http://api:8000/categories', {
+    cache: 'no-store',
+  });
   if (!categoriesRes.ok) {
     const error = await categoriesRes.text();
     throw new Error(error);
@@ -15,7 +17,9 @@ const getData = async () => {
   const categories = (await categoriesRes.json()).results
     .categories as Category[];
 
-  const flashcardsRes = await fetch('http://api:8000/flashcards');
+  const flashcardsRes = await fetch('http://api:8000/flashcards', {
+    cache: 'no-store',
+  });
   if (!flashcardsRes.ok) {
     const error = await flashcardsRes.text();
     throw new Error(error);
@@ -33,7 +37,7 @@ export default async function Manage() {
 
   const flashcardsWithCategories: FlashcardColumn[] = flashcards.map(
     (flashcard) => {
-      const category = categories.find((c) => c.id === flashcard.categoryId)!;
+      const category = categories.find((c) => c.id === flashcard.category_id)!;
       return {
         ...flashcard,
         category,

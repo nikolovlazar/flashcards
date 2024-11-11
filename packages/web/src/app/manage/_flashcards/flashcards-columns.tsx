@@ -13,7 +13,7 @@ import EditFlashcard from './edit-flashcard-dialog';
 import ConfirmDelete from './confirm-flashcard-delete';
 import { Flashcard, Category } from '@/lib/models';
 
-export type FlashcardColumn = Omit<Flashcard, 'categoryId'> & {
+export type FlashcardColumn = Omit<Flashcard, 'category_id'> & {
   category: Category;
 };
 

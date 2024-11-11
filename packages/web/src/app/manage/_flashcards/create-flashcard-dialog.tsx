@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { Button } from '@/components/ui/button';
 import CategorySelect from './select-category';
 import {
@@ -29,23 +30,30 @@ export default function CreateFlashcard({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const res = await fetch('/api/flashcards', {
-      method: 'POST',
-      body: formData,
-    });
+    await Sentry.startSpan(
+      {
+        name: 'create-flashcard',
+      },
+      async () => {
+        const formData = new FormData(event.currentTarget);
+        const res = await fetch('/api/flashcards', {
+          method: 'POST',
+          body: formData,
+        });
 
-    if (res.ok) {
-      toast.success('Flashcard created');
-      setOpen(false);
-      router.refresh();
-    } else {
-      const message = await res.text();
-      toast.error(message);
-    }
+        if (res.ok) {
+          toast.success('Flashcard created');
+          setOpen(false);
+          router.refresh();
+        } else {
+          const message = await res.text();
+          toast.error(message);
+        }
+      }
+    );
   };
 
-  const [selectedCategory, setSelectedCategory] = useState<Category>(
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     categories[0]
   );
   return (
@@ -85,19 +93,19 @@ export default function CreateFlashcard({
           <div className='grid gap-2'>
             <Label htmlFor='answer'>Add to category</Label>
             <input
-              name='category'
+              name='category_id'
               readOnly
               type='text'
               hidden
               aria-hidden
               aria-readonly
-              value={selectedCategory.id}
+              value={selectedCategory?.id}
               className='hidden'
             />
             <CategorySelect
               defaultValue={{
-                label: selectedCategory.name,
-                value: selectedCategory.slug,
+                label: selectedCategory?.name ?? '',
+                value: selectedCategory?.slug ?? '',
               }}
               onSelect={(slug) =>
                 setSelectedCategory(categories.find((c) => c.slug === slug)!)

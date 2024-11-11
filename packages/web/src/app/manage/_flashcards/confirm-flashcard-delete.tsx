@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,13 +10,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useState, type ReactNode } from "react";
-import { FlashcardColumn } from "./flashcards-columns";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
+} from '@/components/ui/alert-dialog';
+import { useState, type ReactNode } from 'react';
+import { FlashcardColumn } from './flashcards-columns';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Loader } from 'lucide-react';
 
 export default function ConfirmDelete({
   flashcard,
@@ -30,17 +31,24 @@ export default function ConfirmDelete({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    const res = await fetch(`/api/flashcards/${flashcard.id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) {
-      toast.success("Flashcard deleted");
-      setOpen(false);
-      router.refresh();
-    } else {
-      const message = await res.text();
-      toast.error(message);
-    }
+    await Sentry.startSpan(
+      {
+        name: 'delete-flashcard',
+      },
+      async () => {
+        const res = await fetch(`/api/flashcards/${flashcard.id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          toast.success('Flashcard deleted');
+          setOpen(false);
+          router.refresh();
+        } else {
+          const message = await res.text();
+          toast.error(message);
+        }
+      }
+    );
     setIsDeleting(false);
   };
 
@@ -63,9 +71,9 @@ export default function ConfirmDelete({
           <Button
             disabled={isDeleting}
             onClick={handleDelete}
-            className="bg-destructive hover:bg-destructive/80"
+            className='bg-destructive hover:bg-destructive/80'
           >
-            {isDeleting ? <Loader className="animate-spin" /> : "Delete"}
+            {isDeleting ? <Loader className='animate-spin' /> : 'Delete'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

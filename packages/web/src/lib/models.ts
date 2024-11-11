@@ -9,5 +9,5 @@ export type Flashcard = {
   question: string;
   answer: string;
   slug: string;
-  categoryId: number;
+  category_id: number;
 };
