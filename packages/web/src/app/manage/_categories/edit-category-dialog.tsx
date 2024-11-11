@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Category } from "@prisma/client";
-import { useRouter } from "next/navigation";
-import { useState, type ReactNode } from "react";
-import { toast } from "sonner";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Category } from '@/lib/models';
+import { useRouter } from 'next/navigation';
+import { useState, type ReactNode } from 'react';
+import { toast } from 'sonner';
 
 export default function EditCategory({
   category,
@@ -30,12 +30,12 @@ export default function EditCategory({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const res = await fetch(`/api/categories/${category.id}`, {
-      method: "POST",
+      method: 'PATCH',
       body: formData,
     });
 
     if (res.ok) {
-      toast.success("Category updated");
+      toast.success('Category updated');
       setOpen(false);
       router.refresh();
     } else {
@@ -47,23 +47,23 @@ export default function EditCategory({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="gap-6">
+      <DialogContent className='gap-6'>
         <DialogHeader>
           <DialogTitle>Edit {category.name}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} id="create-category">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
+        <form onSubmit={handleSubmit} id='create-category'>
+          <div className='grid gap-2'>
+            <Label htmlFor='name'>Name</Label>
             <Input
-              id="name"
-              name="name"
+              id='name'
+              name='name'
               placeholder={category.name}
               defaultValue={category.name}
             />
           </div>
         </form>
         <DialogFooter>
-          <Button form="create-category" type="submit">
+          <Button form='create-category' type='submit'>
             Update
           </Button>
         </DialogFooter>

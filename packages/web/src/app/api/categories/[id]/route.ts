@@ -1,14 +1,17 @@
 // Update category
-export async function POST(
+export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ) {
   const id = parseInt(params.id, 10);
   const formData = await request.formData();
 
-  const res = await fetch(`http://api:3001/categories/${id}`, {
-    method: "POST",
-    body: formData,
+  const res = await fetch(`http://api:8000/categories/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(Object.fromEntries(formData)),
   });
 
   if (!res.ok) {
@@ -16,7 +19,7 @@ export async function POST(
     return new Response(error, { status: res.status });
   }
 
-  const category = await res.json();
+  const category = (await res.json()).results.category;
 
   return Response.json({ category }, { status: 200 });
 }
@@ -24,12 +27,12 @@ export async function POST(
 // Delete category
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ) {
   const id = parseInt(params.id, 10);
 
-  const res = await fetch(`http://localhost:3001/categories/${id}`, {
-    method: "DELETE",
+  const res = await fetch(`http://api:8000/categories/${id}`, {
+    method: 'DELETE',
   });
 
   if (!res.ok) {

@@ -1,10 +1,13 @@
 // Create Category
-export async function PUT(request: Request) {
+export async function POST(request: Request) {
   const formData = await request.formData();
 
-  const res = await fetch("http://api:3001/categories", {
-    body: formData,
-    method: "PUT",
+  const res = await fetch('http://api:8000/categories', {
+    body: JSON.stringify(Object.fromEntries(formData)),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
   if (!res.ok) {
@@ -12,6 +15,6 @@ export async function PUT(request: Request) {
     return new Response(error, { status: res.status });
   }
 
-  const category = await res.json();
+  const category = (await res.json()).results.category;
   return Response.json(category, { status: 201 });
 }

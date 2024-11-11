@@ -1,17 +1,11 @@
 export type Category = {
-  ID: number;
-  CreatedAt: Date;
-  UpdatedAt: Date;
-  DeletedAt: Date;
+  id: number;
   name: string;
   slug: string;
 };
 
 export type Flashcard = {
-  ID: number;
-  CreatedAt: Date;
-  UpdatedAt: Date;
-  DeletedAt: Date;
+  id: number;
   question: string;
   answer: string;
   slug: string;
