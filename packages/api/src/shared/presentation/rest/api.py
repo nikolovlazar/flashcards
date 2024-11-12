@@ -79,32 +79,32 @@ def populate_database(request):
 
         # Validate JSON structure
         if not (json_string.startswith('[') and json_string.endswith(']')):
-            return {"error": "Invalid JSON array structure"}, 422
+            raise ValueError("Invalid JSON array structure")
 
         try:
             json_data = json.loads(json_string)
         except json.JSONDecodeError as e:
-            return {"error": f"JSON parsing failed: {str(e)}"}, 422
+            raise ValueError(f"JSON parsing failed: {str(e)}")
 
         # Validate data structure
         if not isinstance(json_data, list):
-            return {"error": "Root element must be an array"}, 422
+            raise ValueError("Root element must be an array")
 
         for category in json_data:
             if not isinstance(category, dict):
-                return {"error": "Each category must be an object"}, 422
+                raise ValueError("Each category must be an object")
             if 'name' not in category or 'flashcards' not in category:
-                return {"error": "Category missing required fields"}, 422
+                raise ValueError("Category missing required fields")
             if not isinstance(category['flashcards'], list):
-                return {"error": "Flashcards must be an array"}, 422
+                raise ValueError("Flashcards must be an array")
 
             category_obj = category_command.create_category(name=category["name"])
 
             for flashcard in category["flashcards"]:
                 if not isinstance(flashcard, dict):
-                    return {"error": "Each flashcard must be an object"}, 422
+                    raise ValueError("Each flashcard must be an object")
                 if 'question' not in flashcard or 'answer' not in flashcard:
-                    return {"error": "Flashcard missing required fields"}, 422
+                    raise ValueError("Flashcard missing required fields")
 
                 flashcard_command.create_flashcard(
                     question=flashcard["question"],
@@ -116,10 +116,9 @@ def populate_database(request):
 
     except groq.BadRequestError as e:
         # Handle Groq API specific errors
-        return {"error": str(e)}, 400
+        raise ValueError(str(e))
     except Exception as e:
-        # Catch all other errors and return a proper JSON response
-        return {"error": f"Unexpected error: {str(e)}"}, 500
+        raise ValueError(f"Unexpected error: {str(e)}")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
