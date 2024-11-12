@@ -1,3 +1,4 @@
+from time import sleep
 from typing import List
 
 from ninja import Router
@@ -100,6 +101,7 @@ def update_flashcard(request, flashcard_id: int, body: PatchFlashcardRequestBody
         except FlashcardNotFoundError:
             pass
         i += 1
+        sleep(0.002)
         if i > 10_000:
             return 404, error_response("Flashcard not found")
 
