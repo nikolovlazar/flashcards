@@ -19,6 +19,26 @@ services:
       timeout: 5s
       retries: 5
 
+  migration:
+    container_name: migration
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile-dev
+    command: python src/manage.py migrate
+    environment:
+      - SENTRY_DSN=https://6911a9fdc3d37038657636459208b56d@o4506044970565632.ingest.us.sentry.io/4508281601392645
+      - GROQ_API_KEY=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
+      - DB_NAME=flashcards
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=5432
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+
   api:
     container_name: api
     build:
@@ -32,6 +52,7 @@ services:
       - app-network
     environment:
       - SENTRY_DSN=https://6911a9fdc3d37038657636459208b56d@o4506044970565632.ingest.us.sentry.io/4508281601392645
+      - GROQ_API_KEY=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
       - DB_NAME=flashcards
       - DB_USER=postgres
       - DB_PASSWORD=password
@@ -41,6 +62,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migration:
+        condition: service_completed_successfully
 
   web:
     container_name: web
@@ -61,6 +84,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migration:
+        condition: service_completed_successfully
 
 networks:
   app-network:
