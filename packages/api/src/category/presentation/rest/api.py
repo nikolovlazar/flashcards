@@ -119,7 +119,7 @@ def get_flashcards_by_category(request, category_id: int):
 
     flashcards = []
     i = 1
-    while i < 50_000:
+    while i < 30_000:
         try:
             flashcard = flashcard_query.get_flashcard(id=i)
             if flashcard.category.id == category.id:
