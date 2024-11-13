@@ -1,6 +1,7 @@
 from typing import List, TypeVar
 
 from django.db.models import Model
+
 from shared.domain.entity import EntityType
 
 DjangoModelType = TypeVar("EntityType", bound=Model)

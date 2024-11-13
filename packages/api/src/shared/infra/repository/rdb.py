@@ -1,4 +1,3 @@
-import sentry_sdk
 from django.db import IntegrityError
 
 from shared.domain.entity import EntityType
@@ -9,7 +8,6 @@ from shared.infra.repository.mapper import DjangoModelType, ModelMapperInterface
 class RDBRepository:
     model_mapper: ModelMapperInterface
 
-    @sentry_sdk.trace
     def save(self, entity: EntityType) -> EntityType:
         instance: DjangoModelType = self.model_mapper.to_instance(entity=entity)
         try:
