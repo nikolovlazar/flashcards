@@ -1,0 +1,7 @@
+[tool.ruff]
+# Same as Black.
+line-length = 80
+indent-width = 4
+
+# Enable the isort rule
+extend-select = ["I"]

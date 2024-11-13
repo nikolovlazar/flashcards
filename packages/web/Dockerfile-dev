@@ -1,0 +1,24 @@
+# Use an official Node.js image as the base image
+FROM node:20-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy only package.json and package-lock.json (or yarn.lock) to leverage Docker cache
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of your application code
+COPY . .
+
+# Expose the Next.js development server port
+EXPOSE 3000
+
+# Set environment variables
+ENV NODE_ENV development
+ENV PORT 3000
+
+# Start the Next.js application in development mode
+CMD ["npm", "run", "dev"]
