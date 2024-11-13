@@ -53,7 +53,7 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
-  return (
+  return displayedFlashcards.length > 0 ? (
     <Card className='w-full max-w-md'>
       <CardHeader>
         <CardTitle>{displayedFlashcards[step].question}</CardTitle>
@@ -81,5 +81,7 @@ export default function Flashcards({ category }: { category: Category }) {
         </Button>
       </CardFooter>
     </Card>
+  ) : (
+    <div>No flashcards found</div>
   );
 }
