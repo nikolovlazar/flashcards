@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import { Button } from '@/components/ui/button';
 import CategorySelect from './select-category';
 import {
@@ -30,27 +29,21 @@ export default function CreateFlashcard({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await Sentry.startSpan(
-      {
-        name: 'create-flashcard',
-      },
-      async () => {
-        const formData = new FormData(event.currentTarget);
-        const res = await fetch('/api/flashcards', {
-          method: 'POST',
-          body: formData,
-        });
 
-        if (res.ok) {
-          toast.success('Flashcard created');
-          setOpen(false);
-          router.refresh();
-        } else {
-          const message = await res.text();
-          toast.error(message);
-        }
-      }
-    );
+    const formData = new FormData(event.currentTarget);
+    const res = await fetch('/api/flashcards', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (res.ok) {
+      toast.success('Flashcard created');
+      setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
+    }
   };
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(

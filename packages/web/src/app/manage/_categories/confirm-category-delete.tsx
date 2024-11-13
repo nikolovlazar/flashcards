@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -32,24 +31,20 @@ export default function ConfirmDelete({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await Sentry.startSpan(
-      {
-        name: 'delete-category',
-      },
-      async () => {
-        const res = await fetch(`/api/categories/${category.id}`, {
-          method: 'DELETE',
-        });
-        if (res.ok) {
-          toast.success('Category deleted');
-          setOpen(false);
-          router.refresh();
-        } else {
-          const message = await res.text();
-          toast.error(message);
-        }
-      }
-    );
+
+    const res = await fetch(`/api/categories/${category.id}`, {
+      method: 'DELETE',
+    });
+
+    if (res.ok) {
+      toast.success('Category deleted');
+      setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
+    }
+
     setIsDeleting(false);
   };
 

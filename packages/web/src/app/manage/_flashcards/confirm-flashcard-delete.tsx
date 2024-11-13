@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -31,24 +30,20 @@ export default function ConfirmDelete({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await Sentry.startSpan(
-      {
-        name: 'delete-flashcard',
-      },
-      async () => {
-        const res = await fetch(`/api/flashcards/${flashcard.id}`, {
-          method: 'DELETE',
-        });
-        if (res.ok) {
-          toast.success('Flashcard deleted');
-          setOpen(false);
-          router.refresh();
-        } else {
-          const message = await res.text();
-          toast.error(message);
-        }
-      }
-    );
+
+    const res = await fetch(`/api/flashcards/${flashcard.id}`, {
+      method: 'DELETE',
+    });
+
+    if (res.ok) {
+      toast.success('Flashcard deleted');
+      setOpen(false);
+      router.refresh();
+    } else {
+      const message = await res.text();
+      toast.error(message);
+    }
+
     setIsDeleting(false);
   };
 

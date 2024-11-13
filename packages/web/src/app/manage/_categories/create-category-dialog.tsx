@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -24,18 +23,12 @@ export default function CreateCategory() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await Sentry.startSpan(
-      {
-        name: 'create-category',
-      },
-      async () => {
-        const formData = new FormData(event.currentTarget);
-        await fetch('/api/categories', {
-          method: 'POST',
-          body: formData,
-        });
-      }
-    );
+
+    const formData = new FormData(event.currentTarget);
+    await fetch('/api/categories', {
+      method: 'POST',
+      body: formData,
+    });
 
     toast.success('Category created');
     setOpen(false);

@@ -12,6 +12,7 @@ from category.presentation.rest.api import router as category_router
 from category.presentation.rest.containers import category_command
 from flashcard.presentation.rest.api import router as flashcard_router
 from flashcard.presentation.rest.containers import flashcard_command
+from shared.domain.exception import ModelExistsError
 
 api = NinjaAPI(
     title="Flashcards API",
@@ -46,8 +47,31 @@ def retry_on_error(max_attempts=3, delay_seconds=1):
     return decorator
 
 @api.get("/populate-database")
-@retry_on_error(max_attempts=5)
 def populate_database(request):
+    try:
+        categories = generate_dummy_data()
+
+        for category in categories:
+            category_obj = category_command.create_category(name=category["name"])
+
+            for flashcard in category["flashcards"]:
+                try:
+                    flashcard_command.create_flashcard(
+                        question=flashcard["question"],
+                        answer=flashcard["answer"],
+                        category=category_obj
+                    )
+                except ModelExistsError as e:
+                    print(f"Error creating flashcard {flashcard['question']}: {str(e)}")
+
+        print("Database populated successfully!!!!!")
+    except Exception as e:
+        raise ValueError(f"Unexpected error: {str(e)}")
+
+@retry_on_error(max_attempts=5)
+def generate_dummy_data():
+    categories = []
+
     groq = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
     # Add more explicit JSON formatting instructions
@@ -98,25 +122,16 @@ def populate_database(request):
             if not isinstance(category['flashcards'], list):
                 raise ValueError("Flashcards must be an array")
 
-            category_obj = category_command.create_category(name=category["name"])
-
             for flashcard in category["flashcards"]:
                 if not isinstance(flashcard, dict):
                     raise ValueError("Each flashcard must be an object")
                 if 'question' not in flashcard or 'answer' not in flashcard:
                     raise ValueError("Flashcard missing required fields")
 
-                flashcard_command.create_flashcard(
-                    question=flashcard["question"],
-                    answer=flashcard["answer"],
-                    category=category_obj
-                )
+            categories.append(category)
 
-        return {"message": "Database populated successfully"}
+        return categories
 
-    except groq.BadRequestError as e:
-        # Handle Groq API specific errors
-        raise ValueError(str(e))
     except Exception as e:
         raise ValueError(f"Unexpected error: {str(e)}")
 
