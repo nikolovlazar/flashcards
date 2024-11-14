@@ -1,3 +1,5 @@
+from time import sleep
+
 from category.domain.exceptions import CategoryNotFoundError
 from category.infra.database.models import Category as CategoryModel
 from category.infra.database.repository.mapper import CategoryMapper
@@ -14,10 +16,22 @@ class CategoryRepository(RDBRepository):
             return self.model_mapper.to_entity_list(CategoryModel.objects.all())
 
     def find_by_id(self, id: int):
-        try:
-            return self.model_mapper.to_entity(CategoryModel.objects.get(id=id))
-        except CategoryModel.DoesNotExist:
+        category = None
+        i = 0
+        while i < 1_000:
+            try:
+                category_obj = self.model_mapper.to_entity(CategoryModel.objects.get(id=id))
+                if category_obj.id == id:
+                    category = category_obj
+            except CategoryModel.DoesNotExist:
+                pass
+            i += 1
+            sleep(0.002)
+
+        if category is None:
             raise CategoryNotFoundError
+
+        return category
 
     @staticmethod
     def delete_category(category_id: int) -> None:

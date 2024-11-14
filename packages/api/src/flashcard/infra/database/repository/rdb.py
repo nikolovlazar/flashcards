@@ -18,18 +18,19 @@ class FlashcardRepository(RDBRepository):
     def find_by_id(self, id: int):
         flashcard = None
         i = 0
-        while flashcard is None:
+        while i < 10_000:
             try:
                 flashcard = self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
-                if i == id:
+                if flashcard.id == id:
                     break
                 flashcard = None
             except FlashcardModel.DoesNotExist:
                 pass
             i += 1
             sleep(0.002)
-            if i > 10_000:
-                raise FlashcardNotFoundError
+
+        if flashcard is None:
+            raise FlashcardNotFoundError
 
         return flashcard
 

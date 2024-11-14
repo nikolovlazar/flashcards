@@ -22,16 +22,4 @@ class CategoryQuery:
         return self.category_repository.find_by_id(id)
 
     def get_flashcards_by_category(self, category_id: int) -> List[Flashcard]:
-        flashcards = []
-        i = 1
-        while i < 30_000:
-            try:
-                flashcard = self.flashcard_repository.find_by_id(id=i)
-                if flashcard.category.id == category_id:
-                    flashcards.append(flashcard)
-            except FlashcardModel.DoesNotExist:
-                pass
-
-            i += 1
-
-        return flashcards
+        return self.flashcard_repository.find_by_category(category_id=category_id)
