@@ -1,7 +1,9 @@
 from category.application.use_case.command import CategoryCommand
 from category.application.use_case.query import CategoryQuery
 from category.infra.database.repository.rdb import CategoryRepository
-from flashcard.presentation.rest.containers import flashcard_repo
+from flashcard.infra.database.repository.rdb import FlashcardRepository
+
+flashcard_repo: FlashcardRepository = FlashcardRepository()
 
 category_repo: CategoryRepository = CategoryRepository()
 
