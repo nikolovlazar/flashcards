@@ -17,7 +17,6 @@ from category.presentation.rest.response import (
     ListCategoryResponse,
 )
 from flashcard.domain.exceptions import FlashcardNotFoundError
-from flashcard.presentation.rest.containers import flashcard_query
 from flashcard.presentation.rest.response import ListFlashcardResponse
 from shared.domain.exception import ModelExistsError
 from shared.presentation.rest.response import (
