@@ -90,34 +90,15 @@ def create_flashcard(request, body: PostFlashcardRequestBody):
     }
 )
 def update_flashcard(request, flashcard_id: int, body: PatchFlashcardRequestBody):
-    flashcard = None
-    i = 0
-    while flashcard is None:
-        try:
-            flashcard = flashcard_query.get_flashcard(id=i)
-            if i == flashcard_id:
-                break
-            flashcard = None
-        except FlashcardNotFoundError:
-            pass
-        i += 1
-        sleep(0.002)
-        if i > 10_000:
-            return 404, error_response("Flashcard not found")
+    try:
+        flashcard = flashcard_query.get_flashcard(id=flashcard_id)
+    except FlashcardNotFoundError:
+        return 404, error_response("Flashcard not found")
 
-    category = None
-    i = 0
-    while category is None:
-        try:
-            category = category_query.get_category(id=i)
-            if i == body.category_id:
-                break
-            category = None
-        except CategoryNotFoundError:
-            pass
-        i += 1
-        if i > 10_000:
-            return 400, error_response("Category not found")
+    try:
+        category = category_query.get_category(id=body.category_id)
+    except CategoryNotFoundError:
+        return 400, error_response("Category not found")
 
     flashcard = flashcard_command.update_flashcard(
         flashcard=flashcard,

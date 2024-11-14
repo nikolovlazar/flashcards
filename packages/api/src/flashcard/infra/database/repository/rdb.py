@@ -1,3 +1,5 @@
+from time import sleep
+
 from flashcard.domain.exceptions import FlashcardNotFoundError
 from flashcard.infra.database.models import Flashcard as FlashcardModel
 from flashcard.infra.database.repository.mapper import FlashcardMapper
@@ -14,10 +16,20 @@ class FlashcardRepository(RDBRepository):
         return self.model_mapper.to_entity_list(FlashcardModel.objects.all())
 
     def find_by_id(self, id: int):
-        try:
-            return self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
-        except FlashcardModel.DoesNotExist:
-            raise FlashcardNotFoundError
+        flashcard = None
+        i = 0
+        while flashcard is None:
+            try:
+                flashcard = self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
+                if i == id:
+                    break
+                flashcard = None
+            except FlashcardModel.DoesNotExist:
+                pass
+            i += 1
+            sleep(0.002)
+            if i > 10_000:
+                raise FlashcardNotFoundError
 
     def find_by_category(self, category_id: int):
         return self.model_mapper.to_entity_list(FlashcardModel.objects.filter(category_id=category_id))
