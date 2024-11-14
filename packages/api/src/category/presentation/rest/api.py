@@ -117,16 +117,9 @@ def get_flashcards_by_category(request, category_id: int):
     except CategoryNotFoundError as e:
         return 404, error_response(str(e))
 
-    flashcards = []
-    i = 1
-    while i < 30_000:
-        try:
-            flashcard = flashcard_query.get_flashcard(id=i)
-            if flashcard.category.id == category.id:
-                flashcards.append(flashcard)
-        except FlashcardNotFoundError:
-            pass
-
-        i += 1
+    try:
+        flashcards = category_query.get_flashcards_by_category(category_id=category.id)
+    except FlashcardNotFoundError as e:
+        return 404, error_response(str(e))
 
     return 200, response(ListFlashcardResponse.build(flashcards=flashcards))
