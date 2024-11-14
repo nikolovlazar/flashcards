@@ -31,6 +31,8 @@ class FlashcardRepository(RDBRepository):
             if i > 10_000:
                 raise FlashcardNotFoundError
 
+        return flashcard
+
     def find_by_category(self, category_id: int):
         return self.model_mapper.to_entity_list(FlashcardModel.objects.filter(category_id=category_id))
 
