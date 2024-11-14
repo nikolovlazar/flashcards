@@ -20,6 +20,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@sentry/nextjs": "^8.38.0",
     "@tanstack/react-query": "^5.45.0",
     "@tanstack/react-table": "^8.17.3",
     "class-variance-authority": "^0.7.0",

@@ -13,9 +13,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 import environ
+import sentry_sdk
 
 env = environ.Env()
 env.read_env(".env")
+
+sentry_sdk.init(
+    dsn="https://ff02c2dffa275e83a334d2361a2dc6cf@o4506044970565632.ingest.us.sentry.io/4508297842393088",
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+    debug=True,
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent

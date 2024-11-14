@@ -1,5 +1,7 @@
 from time import sleep
 
+import sentry_sdk
+
 from flashcard.domain.exceptions import FlashcardNotFoundError
 from flashcard.infra.database.models import Flashcard as FlashcardModel
 from flashcard.infra.database.repository.mapper import FlashcardMapper
@@ -13,34 +15,28 @@ class FlashcardRepository(RDBRepository):
         self.model_mapper = model_mapper
 
     def find_all(self):
-        return self.model_mapper.to_entity_list(FlashcardModel.objects.all())
+        with sentry_sdk.start_span(name="FlashcardRepository:find_all"):
+            return self.model_mapper.to_entity_list(FlashcardModel.objects.all())
 
     def find_by_id(self, id: int):
-        flashcard = None
-        i = 0
-        while i < 10_000:
+        with sentry_sdk.start_span(name="FlashcardRepository:find_by_id"):
             try:
                 flashcard = self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
-                if flashcard.id == id:
-                    break
-                flashcard = None
+                sleep(2)
             except FlashcardModel.DoesNotExist:
-                pass
-            i += 1
-            sleep(0.002)
+                raise FlashcardNotFoundError
 
-        if flashcard is None:
-            raise FlashcardNotFoundError
-
-        return flashcard
+            return flashcard
 
     def find_by_category(self, category_id: int):
-        return self.model_mapper.to_entity_list(FlashcardModel.objects.filter(category_id=category_id))
+        with sentry_sdk.start_span(name="FlashcardRepository:find_by_category"):
+            return self.model_mapper.to_entity_list(FlashcardModel.objects.filter(category_id=category_id))
 
     @staticmethod
     def delete_flashcard(flashcard_id: int) -> None:
-        try:
-            flashcard = FlashcardModel.objects.get(id=flashcard_id)
-            flashcard.delete()
-        except FlashcardModel.DoesNotExist:
-            raise FlashcardNotFoundError
+        with sentry_sdk.start_span(name="FlashcardRepository:delete_flashcard"):
+            try:
+                flashcard = FlashcardModel.objects.get(id=flashcard_id)
+                flashcard.delete()
+            except FlashcardModel.DoesNotExist:
+                raise FlashcardNotFoundError

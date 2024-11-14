@@ -1,5 +1,6 @@
 from typing import List
 
+import sentry_sdk
 from ninja import Router
 
 from category.domain.exceptions import CategoryNotFoundError
@@ -89,24 +90,25 @@ def create_flashcard(request, body: PostFlashcardRequestBody):
     }
 )
 def update_flashcard(request, flashcard_id: int, body: PatchFlashcardRequestBody):
-    try:
-        flashcard = flashcard_query.get_flashcard(id=flashcard_id)
-    except FlashcardNotFoundError:
-        return 404, error_response("Flashcard not found")
+    with sentry_sdk.start_span(name="FlashcardAPI:update_flashcard"):
+        try:
+            flashcard = flashcard_query.get_flashcard(id=flashcard_id)
+        except FlashcardNotFoundError:
+            return 404, error_response("Flashcard not found")
 
-    try:
-        category = category_query.get_category(id=body.category_id)
-    except CategoryNotFoundError:
-        return 400, error_response("Category not found")
+        try:
+            category = category_query.get_category(id=body.category_id)
+        except CategoryNotFoundError:
+            return 400, error_response("Category not found")
 
-    flashcard = flashcard_command.update_flashcard(
-        flashcard=flashcard,
-        question=body.question,
-        answer=body.answer,
-        category=category
-    )
+        flashcard = flashcard_command.update_flashcard(
+            flashcard=flashcard,
+            question=body.question,
+            answer=body.answer,
+            category=category
+        )
 
-    return 200, response(FlashcardResponse.build(flashcard=flashcard))
+        return 200, response(FlashcardResponse.build(flashcard=flashcard))
 
 @router.delete(
     "/{flashcard_id}",
