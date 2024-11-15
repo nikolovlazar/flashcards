@@ -11,17 +11,21 @@ from shared.infra.repository.rdb import RDBRepository
 class FlashcardRepository(RDBRepository):
     model_mapper: FlashcardMapper
 
-    def __init__(self, model_mapper: FlashcardMapper = FlashcardMapper()):
+    def __init__(self, model_mapper=FlashcardMapper()):
         self.model_mapper = model_mapper
 
     def find_all(self):
         with sentry_sdk.start_span(name="FlashcardRepository:find_all"):
-            return self.model_mapper.to_entity_list(FlashcardModel.objects.all())
+            return self.model_mapper.to_entity_list(
+                FlashcardModel.objects.all()
+            )
 
     def find_by_id(self, id: int):
         with sentry_sdk.start_span(name="FlashcardRepository:find_by_id"):
             try:
-                flashcard = self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
+                flashcard = self.model_mapper.to_entity(
+                    FlashcardModel.objects.get(id=id)
+                )
                 sleep(2)
             except FlashcardModel.DoesNotExist:
                 raise FlashcardNotFoundError
@@ -30,7 +34,9 @@ class FlashcardRepository(RDBRepository):
 
     def find_by_category(self, category_id: int):
         with sentry_sdk.start_span(name="FlashcardRepository:find_by_category"):
-            return self.model_mapper.to_entity_list(FlashcardModel.objects.filter(category_id=category_id))
+            return self.model_mapper.to_entity_list(
+                FlashcardModel.objects.filter(category_id=category_id)
+            )
 
     @staticmethod
     def delete_flashcard(flashcard_id: int) -> None:

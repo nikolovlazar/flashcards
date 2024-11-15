@@ -5,14 +5,19 @@ from shared.infra.repository.mapper import ModelMapperInterface
 
 
 class FlashcardMapper(ModelMapperInterface):
-    def to_entity(self, instance: FlashcardModel) -> FlashcardEntity:
-        category = CategoryEntity(id=instance.category_id, name=instance.category.name, slug=instance.category.slug)
+    def to_entity(self, model: FlashcardModel) -> FlashcardEntity:
+        category = CategoryEntity(
+            id=model.category.id,
+            name=model.category.name,
+            slug=model.category.slug,
+            flashcards=[],
+        )
         return FlashcardEntity(
-            id=instance.id,
-            question=instance.question,
-            answer=instance.answer,
+            id=model.id,
+            question=model.question,
+            answer=model.answer,
             category=category,
-            slug=instance.slug
+            slug=model.slug,
         )
 
     def to_instance(self, entity: FlashcardEntity) -> FlashcardModel:
@@ -21,5 +26,5 @@ class FlashcardMapper(ModelMapperInterface):
             question=entity.question,
             answer=entity.answer,
             category_id=entity.category.id,
-            slug=entity.slug
+            slug=entity.slug,
         )

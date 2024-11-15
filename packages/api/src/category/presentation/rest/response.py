@@ -9,13 +9,23 @@ class CategorySchema(Schema):
     id: int
     name: str
     slug: str
+    flashcards: List[object] | None
+
 
 class CategoryResponse(Schema):
     category: CategorySchema
 
     @classmethod
     def build(cls, category: Category) -> dict:
-        return cls(category=CategorySchema(id=category.id, name=category.name, slug=category.slug)).model_dump()
+        return cls(
+            category=CategorySchema(
+                id=category.id,
+                name=category.name,
+                slug=category.slug,
+                flashcards=category.flashcards,
+            )
+        ).model_dump()
+
 
 class ListCategoryResponse(Schema):
     categories: List[CategorySchema]
@@ -23,8 +33,13 @@ class ListCategoryResponse(Schema):
     @classmethod
     def build(cls, categories: List[Category]) -> dict:
         return cls(
-            categories = [
-                CategorySchema(id=category.id, name=category.name, slug=category.slug)
+            categories=[
+                CategorySchema(
+                    id=category.id,
+                    name=category.name,
+                    slug=category.slug,
+                    flashcards=category.flashcards,
+                )
                 for category in categories
             ]
         ).model_dump()

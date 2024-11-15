@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.utils.text import slugify
 
@@ -6,6 +5,7 @@ from category.domain.exceptions import CategoryNameTooShort
 
 
 class Category(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
 
@@ -21,7 +21,8 @@ class Category(models.Model):
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
+

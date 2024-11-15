@@ -6,6 +6,7 @@ from flashcard.domain.exceptions import FlashcardQuestionTooShort
 
 
 class Flashcard(models.Model):
+    id = models.AutoField(primary_key=True)
     question = models.CharField(max_length=255)
     answer = models.TextField()
     category = models.ForeignKey(CategoryModel, on_delete=models.CASCADE)
@@ -23,7 +24,7 @@ class Flashcard(models.Model):
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.question

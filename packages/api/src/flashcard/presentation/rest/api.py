@@ -32,22 +32,24 @@ from shared.presentation.rest.response import (
 
 router = Router(tags=["flashcards"])
 
+
 @router.get(
     "",
     response={
         200: ObjectResponse[ListFlashcardResponse],
-    }
+    },
 )
 def get_all_flashcards(request):
     flashcards: List[Flashcard] = flashcard_query.get_all_flashcards()
     return 200, response(ListFlashcardResponse.build(flashcards=flashcards))
+
 
 @router.get(
     "/{flashcard_id}",
     response={
         200: ObjectResponse[FlashcardResponse],
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def get_flashcard(request, flashcard_id: int):
     try:
@@ -57,12 +59,13 @@ def get_flashcard(request, flashcard_id: int):
 
     return 200, response(FlashcardResponse.build(flashcard=flashcard))
 
+
 @router.post(
     "",
     response={
         201: ObjectResponse[FlashcardResponse],
         400: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def create_flashcard(request, body: PostFlashcardRequestBody):
     try:
@@ -72,9 +75,7 @@ def create_flashcard(request, body: PostFlashcardRequestBody):
 
     try:
         flashcard = flashcard_command.create_flashcard(
-            question=body.question,
-            answer=body.answer,
-            category=category
+            question=body.question, answer=body.answer, category=category
         )
         return 201, response(FlashcardResponse.build(flashcard=flashcard))
     except FlashcardQuestionTooShort:
@@ -82,19 +83,25 @@ def create_flashcard(request, body: PostFlashcardRequestBody):
     except FlashcardExistsError:
         return 400, error_response("Flashcard already exists")
 
+
 @router.patch(
     "/{flashcard_id}",
     response={
         200: ObjectResponse[FlashcardResponse],
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
-def update_flashcard(request, flashcard_id: int, body: PatchFlashcardRequestBody):
+def update_flashcard(
+    request, flashcard_id: int, body: PatchFlashcardRequestBody
+):
     with sentry_sdk.start_span(name="FlashcardAPI:update_flashcard"):
         try:
             flashcard = flashcard_query.get_flashcard(id=flashcard_id)
         except FlashcardNotFoundError:
             return 404, error_response("Flashcard not found")
+
+        if not body.category_id:
+            return 400, error_response("Category must be provided")
 
         try:
             category = category_query.get_category(id=body.category_id)
@@ -105,17 +112,18 @@ def update_flashcard(request, flashcard_id: int, body: PatchFlashcardRequestBody
             flashcard=flashcard,
             question=body.question,
             answer=body.answer,
-            category=category
+            category=category,
         )
 
         return 200, response(FlashcardResponse.build(flashcard=flashcard))
+
 
 @router.delete(
     "/{flashcard_id}",
     response={
         204: None,
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def delete_flashcard(request, flashcard_id: int):
     try:
