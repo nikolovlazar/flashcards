@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { shuffleArray } from '../../../utils/array';
+import { useEffect, useMemo, useState } from "react";
+import { shuffleArray } from "../../../utils/array";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { ArrowBigRight, RotateCcw } from 'lucide-react';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Category, Flashcard } from '@/lib/models';
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { ArrowBigRight, RotateCcw } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Category, Flashcard } from "@/lib/models";
 
 export default function Flashcards({ category }: { category: Category }) {
   const { data } = useSuspenseQuery({
@@ -26,7 +26,7 @@ export default function Flashcards({ category }: { category: Category }) {
     queryFn: async () => {
       const response = await fetch(
         `/api/categories/${category.id}/flashcards`,
-        { cache: 'no-store' }
+        { cache: "no-store" },
       );
       const data = await response.json();
       return data.flashcards;
@@ -37,7 +37,7 @@ export default function Flashcards({ category }: { category: Category }) {
 
   const displayedFlashcards = useMemo(
     () => shuffleArray(flashcards),
-    [flashcards]
+    [flashcards],
   );
   const [step, setStep] = useState(0);
 
@@ -53,13 +53,13 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
-  return displayedFlashcards.length > 0 ? (
-    <Card className='w-full max-w-md'>
+  return (
+    <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>{displayedFlashcards[step].question}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Accordion type='single' collapsible>
+        <Accordion type="single" collapsible>
           <AccordionItem value={displayedFlashcards[step].slug}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
@@ -68,11 +68,11 @@ export default function Flashcards({ category }: { category: Category }) {
           </AccordionItem>
         </Accordion>
       </CardContent>
-      <CardFooter className='justify-between'>
+      <CardFooter className="justify-between">
         <div>
           {step + 1} / {displayedFlashcards.length}
         </div>
-        <Button onClick={nextStep} variant='outline' size='icon'>
+        <Button onClick={nextStep} variant="outline" size="icon">
           {step === displayedFlashcards.length - 1 ? (
             <RotateCcw />
           ) : (
@@ -81,7 +81,5 @@ export default function Flashcards({ category }: { category: Category }) {
         </Button>
       </CardFooter>
     </Card>
-  ) : (
-    <div>No flashcards found</div>
   );
 }
