@@ -9,8 +9,9 @@ Flashcards is a simple CRUD app that allows users to create their own flashcards
 - Create a Sentry Next.js project
 - Set up Sentry with the Next.js wizard: `npx @sentry/wizard@latest -i nextjs`
 - Create a Sentry Django project
-- Install Sentry's Django SDK: `pip install --upgrade 'sentry-sdk[django]'`
+- Add Sentry's Django SDK in `requirements.txt`: `sentry-sdk[django]`
 - Configure the [Sentry Django SDK](https://docs.sentry.io/platforms/python/integrations/django/#configure)
+- Re-run `docker compose up --build` if needed
 
 ## Finding Bugs
 
