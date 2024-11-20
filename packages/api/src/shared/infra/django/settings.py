@@ -26,7 +26,9 @@ DEBUG = False
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-du4_&65!s7+k62o0y&ou3wjkk&j(-9mk*s0sz&4f3)d-rlpl7+"
+SECRET_KEY = (
+    "django-insecure-du4_&65!s7+k62o0y&ou3wjkk&j(-9mk*s0sz&4f3)d-rlpl7+"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,12 +39,12 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "api"]
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
+    # "django.contrib.admin",
+    # "django.contrib.auth",
+    # "django.contrib.contenttypes",
+    # "django.contrib.sessions",
+    # "django.contrib.messages",
+    # "django.contrib.staticfiles",
     "flashcard.infra.django.apps.FlashcardConfig",
     "category.infra.django.apps.CategoryConfig",
 ]
@@ -54,12 +56,12 @@ MIGRATION_MODULES = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    # "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     # "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # "django.contrib.messages.middleware.MessageMiddleware",
+    # "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "shared.presentation.rest.api"
