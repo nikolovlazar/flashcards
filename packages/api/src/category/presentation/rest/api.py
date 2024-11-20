@@ -3,7 +3,10 @@ from typing import List
 from ninja import Router
 
 from category.domain.entity import Category
-from category.domain.exceptions import CategoryNotFoundError
+from category.domain.exceptions import (
+    CategoryNameTooShort,
+    CategoryNotFoundError,
+)
 from category.presentation.rest.containers import (
     category_command,
     category_query,
@@ -28,22 +31,24 @@ from shared.presentation.rest.response import (
 
 router = Router(tags=["categories"])
 
+
 @router.get(
     "",
     response={
         200: ObjectResponse[ListCategoryResponse],
-    }
+    },
 )
 def get_all_categories(request):
     categories: List[Category] = category_query.get_all_categories()
     return 200, response(ListCategoryResponse.build(categories=categories))
+
 
 @router.get(
     "/{category_id}",
     response={
         200: ObjectResponse[CategoryResponse],
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def get_category(request, category_id: int):
     try:
@@ -53,26 +58,30 @@ def get_category(request, category_id: int):
 
     return 200, response(CategoryResponse.build(category=category))
 
+
 @router.post(
     "",
     response={
         201: ObjectResponse[CategoryResponse],
         400: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def create_category(request, body: PostCategoryRequestBody):
     try:
         category = category_command.create_category(name=body.name)
         return 201, response(CategoryResponse.build(category=category))
+    except CategoryNameTooShort:
+        return 400, error_response("Bad Request")
     except ModelExistsError:
         return 400, error_response("Category already exists")
+
 
 @router.patch(
     "/{category_id}",
     response={
         200: ObjectResponse[CategoryResponse],
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def update_category(request, category_id: int, body: PatchCategoryRequestBody):
     try:
@@ -81,18 +90,21 @@ def update_category(request, category_id: int, body: PatchCategoryRequestBody):
         return 404, error_response(str(e))
 
     try:
-        category = category_command.update_category(category=category, name=body.name)
+        category = category_command.update_category(
+            category=category, name=body.name
+        )
     except CategoryNotFoundError as e:
         return 404, error_response(str(e))
 
     return 200, response(CategoryResponse.build(category=category))
+
 
 @router.delete(
     "/{category_id}",
     response={
         204: None,
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def delete_category(request, category_id: int):
     try:
@@ -108,7 +120,7 @@ def delete_category(request, category_id: int):
     response={
         200: ObjectResponse[ListFlashcardResponse],
         404: ObjectResponse[ErrorMessageResponse],
-    }
+    },
 )
 def get_flashcards_by_category(request, category_id: int):
     try:
@@ -117,7 +129,10 @@ def get_flashcards_by_category(request, category_id: int):
         return 404, error_response(str(e))
 
     try:
-        flashcards = category_query.get_flashcards_by_category(category_id=category.id)
+        assert category.id
+        flashcards = category_query.get_flashcards_by_category(
+            category_id=category.id
+        )
     except FlashcardNotFoundError as e:
         return 404, error_response(str(e))
 
