@@ -10,11 +10,11 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=flashcards
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - app-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -43,7 +43,7 @@ services:
       context: ./packages/api
       dockerfile: Dockerfile-dev
     ports:
-      - '8000:8000'
+      - "8000:8000"
     volumes:
       - ./packages/api:/app
     networks:
@@ -57,20 +57,37 @@ services:
       migration:
         condition: service_completed_successfully
 
+  ## Development Web build
+  # web:
+  #   container_name: web
+  #   build:
+  #     context: ./packages/web
+  #     dockerfile: Dockerfile-dev
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./packages/web:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - PORT=3000
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     migration:
+  #       condition: service_completed_successfully
+
+  ## Production Web build
   web:
     container_name: web
     build:
       context: ./packages/web
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile-prod
     ports:
-      - '3000:3000'
-    volumes:
-      - ./packages/web:/app
-      - /app/node_modules
+      - "3000:3000"
     environment:
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
-    command: npm run dev
     networks:
       - app-network
     depends_on:
