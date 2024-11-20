@@ -22,6 +22,7 @@ api = NinjaAPI(
 api.add_router("categories", category_router)
 api.add_router("flashcards", flashcard_router)
 
+
 @api.get("/wipe-database")
 def wipe_database(request):
     from django.db import connection
@@ -146,6 +147,7 @@ def generate_dummy_data():
 
     except Exception as e:
         raise ValueError(f"Unexpected error: {str(e)}")
+
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
