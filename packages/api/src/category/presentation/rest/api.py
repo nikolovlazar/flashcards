@@ -70,8 +70,6 @@ def create_category(request, body: PostCategoryRequestBody):
     try:
         category = category_command.create_category(name=body.name)
         return 201, response(CategoryResponse.build(category=category))
-    except CategoryNameTooShort:
-        return 400, error_response("Bad Request")
     except ModelExistsError:
         return 400, error_response("Category already exists")
 
