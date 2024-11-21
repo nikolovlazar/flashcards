@@ -16,26 +16,12 @@ class FlashcardRepository(RDBRepository):
         return self.model_mapper.to_entity_list(FlashcardModel.objects.all())
 
     def find_by_id(self, id: int):
-        flashcard = None
-        i = 0
-        while i < 10_000:
-            try:
-                flashcard = self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
-                if flashcard.id == id:
-                    break
-                flashcard = None
-            except FlashcardModel.DoesNotExist:
-                pass
-            i += 1
-            sleep(0.002)
-
-        if flashcard is None:
-            raise FlashcardNotFoundError
-
-        return flashcard
+        return self.model_mapper.to_entity(FlashcardModel.objects.get(id=id))
 
     def find_by_category(self, category_id: int):
-        return self.model_mapper.to_entity_list(FlashcardModel.objects.filter(category_id=category_id))
+        return self.model_mapper.to_entity_list(
+            FlashcardModel.objects.filter(category_id=category_id)
+        )
 
     @staticmethod
     def delete_flashcard(flashcard_id: int) -> None:
