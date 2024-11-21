@@ -33,7 +33,22 @@ export default function Flashcards({ category }: { category: Category }) {
     },
   });
 
+
   const flashcards = data as Flashcard[];
+
+  // Early return if no flashcards available
+  if (!flashcards?.length) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>No Flashcards Available</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>There are no flashcards available for this category yet.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const displayedFlashcards = useMemo(
     () => shuffleArray(flashcards),
@@ -53,17 +68,40 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
+  // Safety check - if somehow step is invalid, reset it
+  useEffect(() => {
+    if (step >= displayedFlashcards.length) {
+      setStep(0);
+    }
+  }, [step, displayedFlashcards.length]);
+
+  // Get current flashcard with safety check
+  const currentFlashcard = displayedFlashcards[step];
+
+  if (!currentFlashcard) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Error</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>Unable to display flashcard. Please try again.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{currentFlashcard.question}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+          <AccordionItem value={currentFlashcard.slug}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {currentFlashcard.answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
