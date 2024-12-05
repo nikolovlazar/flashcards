@@ -42,7 +42,7 @@ export default function Flashcards({ category }: { category: Category }) {
   const [step, setStep] = useState(0);
 
   const nextStep = () => {
-    if (step === displayedFlashcards.length - 1) {
+    if (step === (displayedFlashcards?.length ?? 0) - 1) {
       setStep(0);
       return;
     }
@@ -53,27 +53,40 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
+  if (!displayedFlashcards?.length) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>No flashcards available</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>There are no flashcards available for this category yet.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{displayedFlashcards[step]?.question}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+          <AccordionItem value={displayedFlashcards[step]?.slug || 'answer'}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {displayedFlashcards[step]?.answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </CardContent>
       <CardFooter className="justify-between">
         <div>
-          {step + 1} / {displayedFlashcards.length}
+          {step + 1} / {displayedFlashcards?.length || 0}
         </div>
         <Button onClick={nextStep} variant="outline" size="icon">
-          {step === displayedFlashcards.length - 1 ? (
+          {step === (displayedFlashcards?.length ?? 0) - 1 ? (
             <RotateCcw />
           ) : (
             <ArrowBigRight />
