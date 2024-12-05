@@ -53,6 +53,19 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
+  if (!displayedFlashcards || displayedFlashcards.length === 0) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>No flashcards available</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>There are no flashcards in this category yet.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
