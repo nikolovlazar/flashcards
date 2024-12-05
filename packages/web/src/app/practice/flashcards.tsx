@@ -33,13 +33,24 @@ export default function Flashcards({ category }: { category: Category }) {
     },
   });
 
-  const flashcards = data as Flashcard[];
+  const flashcards = (data as Flashcard[]) || [];
 
   const displayedFlashcards = useMemo(
-    () => shuffleArray(flashcards),
+    () => flashcards.length > 0 ? shuffleArray(flashcards) : [],
     [flashcards],
   );
+
+  // Early return if no flashcards
+  if (displayedFlashcards.length === 0) {
+    return (
+      <Card className="w-full max-w-md p-6 text-center">
+        <p>No flashcards available for this category.</p>
+      </Card>
+    );
+  }
+  
   const [step, setStep] = useState(0);
+
 
   const nextStep = () => {
     if (step === displayedFlashcards.length - 1) {
@@ -49,21 +60,26 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep((s) => s + 1);
   };
 
+  // Reset step when category or flashcards change
   useEffect(() => {
     setStep(0);
-  }, [category]);
+  }, [category, displayedFlashcards]);
+
+  const currentFlashcard = displayedFlashcards[step];
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{currentFlashcard?.question}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+          <AccordionItem 
+            value={currentFlashcard?.slug || 'answer'}
+          >
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {currentFlashcard?.answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
