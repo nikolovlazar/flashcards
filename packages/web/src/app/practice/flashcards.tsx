@@ -18,7 +18,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowBigRight, RotateCcw } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { FlashcardsResponse } from "@/lib/types/api";
 import { Category, Flashcard } from "@/lib/models";
+import { isValidFlashcardArray } from "@/utils/type-guards";
 
 export default function Flashcards({ category }: { category: Category }) {
   const { data } = useSuspenseQuery({
@@ -28,18 +30,34 @@ export default function Flashcards({ category }: { category: Category }) {
         `/api/categories/${category.id}/flashcards`,
         { cache: "no-store" },
       );
-      const data = await response.json();
-      return data.flashcards;
+      const result = await response.json() as FlashcardsResponse;
+      
+      if (!result?.flashcards || !isValidFlashcardArray(result.flashcards)) {
+        throw new Error('Invalid flashcard data received');
+      }
+      return result.flashcards;
     },
   });
 
-  const flashcards = data as Flashcard[];
+  const flashcards = data;
 
   const displayedFlashcards = useMemo(
     () => shuffleArray(flashcards),
     [flashcards],
   );
-  const [step, setStep] = useState(0);
+  
+  const [step, setStep] = useState(() => 0);
+  
+  // Handle empty flashcards case
+  if (!displayedFlashcards.length) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>No flashcards available</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   const nextStep = () => {
     if (step === displayedFlashcards.length - 1) {
@@ -53,27 +71,30 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
+  const currentStep = Math.min(step, displayedFlashcards.length - 1);
+  const currentCard = displayedFlashcards[currentStep];
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{currentCard.question}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+          <AccordionItem value={currentCard.slug}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {currentCard.answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </CardContent>
       <CardFooter className="justify-between">
         <div>
-          {step + 1} / {displayedFlashcards.length}
+          {currentStep + 1} / {displayedFlashcards.length}
         </div>
         <Button onClick={nextStep} variant="outline" size="icon">
-          {step === displayedFlashcards.length - 1 ? (
+          {currentStep === displayedFlashcards.length - 1 ? (
             <RotateCcw />
           ) : (
             <ArrowBigRight />
