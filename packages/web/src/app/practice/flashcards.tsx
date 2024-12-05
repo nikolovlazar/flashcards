@@ -20,8 +20,13 @@ import { ArrowBigRight, RotateCcw } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Category, Flashcard } from "@/lib/models";
 
-export default function Flashcards({ category }: { category: Category }) {
-  const { data } = useSuspenseQuery({
+interface FlashcardsProps {
+  category: Category;
+}
+
+export default function Flashcards({ category }: FlashcardsProps) {
+  // Type-safe query result
+  const { data } = useSuspenseQuery<Flashcard[]>({
     queryKey: [`${category.slug}-flashcards`],
     queryFn: async () => {
       const response = await fetch(
@@ -33,13 +38,25 @@ export default function Flashcards({ category }: { category: Category }) {
     },
   });
 
-  const flashcards = data as Flashcard[];
+  // Ensure data is not undefined and handle empty arrays
+  const flashcards = data ?? [];
 
-  const displayedFlashcards = useMemo(
-    () => shuffleArray(flashcards),
-    [flashcards],
-  );
+  // Move shuffling logic to a separate effect to avoid state updates during render
+  const [displayedFlashcards, setDisplayedFlashcards] = useState<Flashcard[]>([]);
   const [step, setStep] = useState(0);
+
+  // Handle shuffling in an effect
+  useEffect(() => {
+    if (flashcards.length > 0) {
+      setDisplayedFlashcards(shuffleArray([...flashcards]));
+      setStep(0);
+    }
+  }, [flashcards]);
+
+  // Reset step when category changes
+  useEffect(() => {
+    setStep(0);
+  }, [category]);
 
   const nextStep = () => {
     if (step === displayedFlashcards.length - 1) {
@@ -49,21 +66,31 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep((s) => s + 1);
   };
 
-  useEffect(() => {
-    setStep(0);
-  }, [category]);
+  // Show loading state if no flashcards are available
+  if (!displayedFlashcards.length) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Loading flashcards...</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  // Safe access to current flashcard
+  const currentFlashcard = displayedFlashcards[step];
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{currentFlashcard.question}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+          <AccordionItem value={currentFlashcard.slug}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {currentFlashcard.answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
