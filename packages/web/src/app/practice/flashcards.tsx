@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowBigRight, RotateCcw } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { AlertCircle } from "lucide-react";
 import { Category, Flashcard } from "@/lib/models";
 
 export default function Flashcards({ category }: { category: Category }) {
@@ -29,6 +30,9 @@ export default function Flashcards({ category }: { category: Category }) {
         { cache: "no-store" },
       );
       const data = await response.json();
+      if (!Array.isArray(data.flashcards) || data.flashcards.length === 0) {
+        throw new Error("No flashcards available for this category");
+      }
       return data.flashcards;
     },
   });
@@ -53,26 +57,35 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
+  // Early return if no flashcards available
+  if (!flashcards || flashcards.length === 0) {
+    return <div className="flex items-center gap-2 text-muted-foreground">
+      <AlertCircle size={16} />
+      <span>No flashcards available for this category.</span>
+    </div>;
+  }
+
+  const currentFlashcard = displayedFlashcards[step];
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{currentFlashcard?.question}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+        {currentFlashcard && <Accordion type="single" collapsible>
+          <AccordionItem value={currentFlashcard.slug}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {currentFlashcard.answer}
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion>}
       </CardContent>
       <CardFooter className="justify-between">
         <div>
           {step + 1} / {displayedFlashcards.length}
         </div>
-        <Button onClick={nextStep} variant="outline" size="icon">
+        <Button onClick={nextStep} variant="outline" size="icon" disabled={!currentFlashcard}>
           {step === displayedFlashcards.length - 1 ? (
             <RotateCcw />
           ) : (
