@@ -1,3 +1,6 @@
+"use client";
+
+import { ErrorBoundary } from '@/components/error-boundary';
 import Practice from './practice-session';
 
 export const dynamic = 'force-dynamic';
@@ -14,5 +17,9 @@ const getCategories = async () => {
 export default async function Manage() {
   const categories = await getCategories();
 
-  return <Practice categories={categories} />;
+  return (
+    <ErrorBoundary>
+      <Practice categories={categories} />
+    </ErrorBoundary>
+  );
 }
