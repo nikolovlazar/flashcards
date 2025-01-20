@@ -40,6 +40,7 @@ export default function Flashcards({ category }: { category: Category }) {
     [flashcards],
   );
 
+
   const [step, setStep] = useState(0);
 
   const nextStep = () => {
@@ -53,7 +54,6 @@ export default function Flashcards({ category }: { category: Category }) {
   useEffect(() => {
     setStep(0);
   }, [category]);
-
   if (!displayedFlashcards.length) {
     return (
       <Card className="w-full max-w-md">
@@ -64,6 +64,17 @@ export default function Flashcards({ category }: { category: Category }) {
 
   const currentCard = displayedFlashcards[step];
   
+
+  if (!displayedFlashcards.length) {
+    return (
+        <CardTitle>{currentCard.question}</CardTitle>
+        <CardContent className="p-6">No flashcards available for this category.</CardContent>
+      </Card>
+    );
+          <AccordionItem value={currentCard.slug}>
+
+  const currentCard = displayedFlashcards[step];
+              {currentCard.answer}
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
