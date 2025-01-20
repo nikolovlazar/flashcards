@@ -33,12 +33,13 @@ export default function Flashcards({ category }: { category: Category }) {
     },
   });
 
-  const flashcards = data as Flashcard[];
+  const flashcards: Flashcard[] = data ?? [];
 
   const displayedFlashcards = useMemo(
-    () => shuffleArray(flashcards),
+    () => flashcards.length > 0 ? shuffleArray(flashcards) : [],
     [flashcards],
   );
+
   const [step, setStep] = useState(0);
 
   const nextStep = () => {
@@ -53,17 +54,27 @@ export default function Flashcards({ category }: { category: Category }) {
     setStep(0);
   }, [category]);
 
+  if (!displayedFlashcards.length) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardContent className="p-6">No flashcards available for this category.</CardContent>
+      </Card>
+    );
+  }
+
+  const currentCard = displayedFlashcards[step];
+  
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>{displayedFlashcards[step].question}</CardTitle>
+        <CardTitle>{currentCard.question}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
-          <AccordionItem value={displayedFlashcards[step].slug}>
+          <AccordionItem value={currentCard.slug}>
             <AccordionTrigger>Reveal answer</AccordionTrigger>
             <AccordionContent>
-              {displayedFlashcards[step].answer}
+              {currentCard.answer}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
