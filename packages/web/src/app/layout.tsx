@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import Providers from './providers';
 import DatabaseOperations from './database-operations';
+import Script from 'next/script';
+import { DevToolbar } from './dev-toolbar';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -105,6 +107,11 @@ export default function RootLayout({
           </div>
           <Toaster position='bottom-center' />
         </Providers>
+        <DevToolbar />
+        <Script
+          src='https://browser.sentry-cdn.com/sentry-toolbar/latest/toolbar.min.js'
+          strategy='beforeInteractive'
+        />
       </body>
     </html>
   );
