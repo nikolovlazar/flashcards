@@ -7,3 +7,4 @@ typing_extensions==4.12.2
 pytest==8.3.3
 ruff==0.6.9
 psycopg2-binary>=2.9.9
+sentry-sdk[django]
