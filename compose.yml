@@ -10,11 +10,11 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=flashcards
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -43,7 +43,7 @@ services:
       context: ./packages/api
       dockerfile: Dockerfile-dev
     ports:
-      - "8000:8000"
+      - '8000:8000'
     volumes:
       - ./packages/api:/app
     networks:
@@ -58,34 +58,16 @@ services:
         condition: service_completed_successfully
 
   ## Development Web build
-  # web:
-  #   container_name: web
-  #   build:
-  #     context: ./packages/web
-  #     dockerfile: Dockerfile-dev
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./packages/web:/app
-  #     - /app/node_modules
-  #   environment:
-  #     - PORT=3000
-  #   networks:
-  #     - app-network
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     migration:
-  #       condition: service_completed_successfully
-
-  ## Production Web build
   web:
     container_name: web
     build:
       context: ./packages/web
-      dockerfile: Dockerfile-prod
+      dockerfile: Dockerfile-dev
     ports:
-      - "3000:3000"
+      - '3000:3000'
+    volumes:
+      - ./packages/web:/app
+      - web-node-modules:/app/node_modules
     environment:
       - PORT=3000
     networks:
@@ -96,9 +78,31 @@ services:
       migration:
         condition: service_completed_successfully
 
+  ## Production Web build
+  # web:
+  #   container_name: web
+  #   build:
+  #     context: ./packages/web
+  #     dockerfile: Dockerfile-prod
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./packages/web:/app
+  #     - web-node-modules:/app/node_modules
+  #   environment:
+  #     - PORT=3000
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     migration:
+  #       condition: service_completed_successfully
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   db-data:
+  web-node-modules:
